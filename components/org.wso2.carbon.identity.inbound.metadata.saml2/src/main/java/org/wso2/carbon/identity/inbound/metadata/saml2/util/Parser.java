@@ -15,8 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.carbon.identity.saml.metadata.util;
-import org.apache.commons.collections.CollectionUtils;
+package org.wso2.carbon.identity.inbound.metadata.saml2.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.opensaml.common.xml.SAMLConstants;
@@ -52,7 +51,7 @@ public class Parser {
         //Assertion Consumer URL
         //search for the url with the post binding, if there is no post binding select the default url
         List<AssertionConsumerService> assertionConsumerServices = spssoDescriptor.getAssertionConsumerServices();
-        if (CollectionUtils.isNotEmpty(assertionConsumerServices)) {
+        if (assertionConsumerServices!=null && assertionConsumerServices.size()>0) {
             List<String> acs = new ArrayList<>();
             boolean foundAssertionConsumerUrl = false;
             for (AssertionConsumerService assertionConsumerService : assertionConsumerServices) {
@@ -80,7 +79,7 @@ public class Parser {
     private void  setClaims(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO){
         List<AttributeConsumingService> services = new ArrayList<>();
         services = spssoDescriptor.getAttributeConsumingServices();
-        if (CollectionUtils.isNotEmpty(services)) {
+        if (services!=null && services.size()>0) {
             //assuming that only one AttrbuteComsumingIndex exists
             AttributeConsumingService service = services.get(0);
             List<RequestedAttribute> attributes = service.getRequestAttributes();
@@ -98,7 +97,7 @@ public class Parser {
     }
     private void  setSingleLogoutServices(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO){
         List<SingleLogoutService> singleLogoutServices = spssoDescriptor.getSingleLogoutServices();
-        if (CollectionUtils.isNotEmpty(singleLogoutServices)) {
+        if (singleLogoutServices!=null && singleLogoutServices.size()>0) {
             boolean foundSingleLogoutServicePostBinding = false;
             for (SingleLogoutService singleLogoutService : singleLogoutServices) {
                 if (singleLogoutService.getBinding().equals(SAMLConstants.SAML2_POST_BINDING_URI)) {

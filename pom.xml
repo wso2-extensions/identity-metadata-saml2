@@ -27,9 +27,11 @@
 
     <modules>
         <module>components/org.wso2.carbon.identity.outbound.metadata.saml2</module>
-        <module>components/org.wso2.carbon.identity.inbound.metadata.sam2</module>
+        <module>components/org.wso2.carbon.identity.inbound.metadata.saml2</module>
 
-        <module>features/org.wso2.carbon.identity.metadata.saml</module>
+        <module>features/org.wso2.carbon.identity.outbound.metadata.saml2</module>
+        <module>features/org.wso2.carbon.identity.inbound.metadata.saml2</module>
+
     </modules>
 
     <repositories>
@@ -186,6 +188,14 @@
             </dependency>
 
 
+            <dependency>
+                <groupId>commons-collections.wso2</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons.collections.version}</version>
+            </dependency>
+
+
+
 
             <dependency>
                 <groupId>org.apache.httpcomponents.wso2</groupId>
@@ -203,21 +213,28 @@
                 <version>${encoder.wso2.version}</version>
             </dependency>
 
-
-
-
+            <dependency>
+                <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
+                <artifactId>org.wso2.carbon.identity.outbound.metadata.saml2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
+                <artifactId>org.wso2.carbon.identity.inbound.metadata.saml2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-
     <properties>
+        <commons.collections.version>3.2.0.wso2v1</commons.collections.version>
         <httpcomponents-httpclient.wso2.version>4.3.1.wso2v2</httpcomponents-httpclient.wso2.version>
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
         <httpcore.version>4.3.3.wso2v1</httpcore.version>
         <joda.wso2.version>2.8.2.wso2v1</joda.wso2.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <commons-codec.wso2.osgi.version.range>[1.4.0,2.0.0)</commons-codec.wso2.osgi.version.range>
-        <carbon.identity.package.import.version.range>[5.0.0, 6.0.0)</carbon.identity.package.import.version.range>
+        <carbon.identity.package.import.version.range>[5.6.0, 6.0.0)</carbon.identity.package.import.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
@@ -229,7 +246,7 @@
         <carbon.base.imp.pkg.version.range>[1.0.0, 2.0.0)</carbon.base.imp.pkg.version.range>
         <carbon.kernel.package.import.version.range>[4.4.0, 5.0.0)</carbon.kernel.package.import.version.range>
         <carbon.kernel.registry.imp.pkg.version>[1.0.1, 2.0.0)</carbon.kernel.registry.imp.pkg.version>
-        <org.wso2.carbon.identity.framework.version>5.6.0-SNAPSHOT</org.wso2.carbon.identity.framework.version>
+        <org.wso2.carbon.identity.framework.version>5.6.1-SNAPSHOT</org.wso2.carbon.identity.framework.version>
         <carbon.kernel.version>4.4.6</carbon.kernel.version>
         <javax.xml.range>[0.0.0,1.0.0)</javax.xml.range>
         <org.apache.xml.security.range>[0.0.0,2.0.0)</org.apache.xml.security.range>
@@ -237,7 +254,6 @@
         <org.opensaml.version>2.6.4.wso2v3</org.opensaml.version>
         <org.wso2.dom.version.range>[0.0.0,1.0.0)</org.wso2.dom.version.range>
         <org.xml.sax.range>[0.0.0,1.0.0)</org.xml.sax.range>
-        <org.wso2.carbon.security.keystore.version>5.6.0.SNAPSHOT</org.wso2.carbon.security.keystore.version>
         <opensaml2.wso2.version>2.6.4.wso2v3</opensaml2.wso2.version>
         <carbon.commons.version>4.5.2</carbon.commons.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>

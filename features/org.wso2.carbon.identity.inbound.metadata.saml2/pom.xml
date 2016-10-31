@@ -19,24 +19,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon.identity.metadata.saml2.outbound</groupId>
+        <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
         <artifactId>identity-metadata-saml2</artifactId>
         <relativePath>../../pom.xml</relativePath>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.identity.metadata.saml2.server.feature</artifactId>
+    <artifactId>org.wso2.carbon.identity.inbound.metadata.saml2.server.feature</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - SAML metadata bundle Server Feature</name>
+    <name>WSO2 Carbon - SAML metadata bundle Inbound Server Feature</name>
     <url>http://wso2.org</url>
-    <description>This feature contains the core bundles required for SAML metadata
+    <description>This feature contains the core bundles required for SAML metadata for inbound
     </description>
 
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
-            <artifactId>org.wso2.carbon.identity.metadata.saml2</artifactId>
+            <artifactId>org.wso2.carbon.identity.inbound.metadata.saml2</artifactId>
         </dependency>
     </dependencies>
 
@@ -54,15 +54,15 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.identity.metadata.saml2.server</id>
+                            <id>org.wso2.carbon.identity.inbound.metadata.saml2.server</id>
                             <propertiesFile>../etc/feature.properties</propertiesFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon.identity.metadata.saml2:org.wso2.carbon.identity.metadata.saml2
+                                    org.wso2.carbon.identity.metadata.saml2:org.wso2.carbon.identity.inbound.metadata.saml2
                                 </bundleDef>
                             </bundles>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.idp.mgt:compatible:${org.wso2.carbon.identity.framework.version}</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.identity.core:compatible:${org.wso2.carbon.identity.framework.version}</importFeatureDef>
                             </importFeatures>
                         </configuration>
                     </execution>
