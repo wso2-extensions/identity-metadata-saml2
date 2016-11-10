@@ -80,7 +80,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
 
                     Property property = new Property();
                     property.setName(IdentityApplicationConstants.Authenticator.SAML2SSO.IDP_ENTITY_ID);
-                    if (entityDescriptor.getEntityID() != null) {
+                    if (entityDescriptor.getEntityID() != null && entityDescriptor.getEntityID().length()>0) {
                         property.setValue(entityDescriptor.getEntityID());
                     } else {
                         property.setValue("");

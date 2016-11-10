@@ -26,6 +26,7 @@ import org.opensaml.xml.parse.BasicParserPool;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
+import org.wso2.carbon.identity.sp.metadata.saml2.Exception.InvalidMetadataException;
 import org.wso2.carbon.registry.core.Registry;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
@@ -47,7 +48,7 @@ public class Parser {
         this.registry = registry;
     }
 
-    private void setAssertionConsumerUrl(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO){
+    private void setAssertionConsumerUrl(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) throws InvalidMetadataException{
         //Assertion Consumer URL
         //search for the url with the post binding, if there is no post binding select the default url
         List<AssertionConsumerService> assertionConsumerServices = spssoDescriptor.getAssertionConsumerServices();
@@ -67,9 +68,14 @@ public class Parser {
             if (!foundAssertionConsumerUrl) {
                 samlssoServiceProviderDO.setDefaultAssertionConsumerUrl(assertionConsumerServices.get(0).getLocation());
             }
+        }else{
+            throw new InvalidMetadataException("Invalid metadata content, no Assertion Consumer URL found");
         }
     }
-    private void setIssuer(EntityDescriptor entityDescriptor , SAMLSSOServiceProviderDO samlssoServiceProviderDO){
+    private void setIssuer(EntityDescriptor entityDescriptor , SAMLSSOServiceProviderDO samlssoServiceProviderDO) throws InvalidMetadataException{
+        if(entityDescriptor.getEntityID()==null || entityDescriptor.getEntityID().length()==0){
+            throw new InvalidMetadataException("Invalid metadata content, Issuer can't be empty");
+        }
         samlssoServiceProviderDO.setIssuer(entityDescriptor.getEntityID());//correct
     }
     private void setNameIDFormat(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO){
@@ -151,7 +157,7 @@ public class Parser {
      */
 
 
-    public SAMLSSOServiceProviderDO parse(String metadata,SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    public SAMLSSOServiceProviderDO parse(String metadata,SAMLSSOServiceProviderDO samlssoServiceProviderDO) throws InvalidMetadataException{
         EntityDescriptor entityDescriptor = this.generateMetadataObjectFromString(metadata);
         if (entityDescriptor != null) {
             this.setIssuer(entityDescriptor,samlssoServiceProviderDO);
