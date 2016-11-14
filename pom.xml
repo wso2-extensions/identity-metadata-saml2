@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
     <artifactId>identity-metadata-saml2</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.1</version>
     <name>WSO2 Carbon SAML2 Metadata</name>
     <packaging>pom</packaging>
     <url>http://wso2.org</url>
@@ -20,7 +20,7 @@
         <developerConnection>scm:git:https://github.com/wso2-extensions/identity-metadata-saml2.git
         </developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/iidentity-metadata-saml2.git</connection>
-        <tag>HEAD</tag>
+        <tag>v0.1.1</tag>
     </scm>
 
     <modules>
