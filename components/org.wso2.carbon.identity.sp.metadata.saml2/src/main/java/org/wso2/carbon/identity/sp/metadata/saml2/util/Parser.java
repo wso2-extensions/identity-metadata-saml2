@@ -26,6 +26,7 @@ import org.opensaml.xml.parse.BasicParserPool;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.sp.metadata.saml2.Exception.InvalidMetadataException;
 import org.wso2.carbon.registry.core.Registry;
 import org.xml.sax.SAXException;
@@ -206,7 +207,7 @@ public class Parser {
     private EntityDescriptor generateMetadataObjectFromString(String metadataString) {
         EntityDescriptor entityDescriptor = null;
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = IdentityUtil.getSecuredDocumentBuilderFactory();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(new ByteArrayInputStream(metadataString.getBytes()));
