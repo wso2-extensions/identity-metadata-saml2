@@ -130,14 +130,14 @@ public class Parser {
             if (descriptor != null) {
                 if (descriptor.getUse().toString().equals("SIGNING")) {
 
-                    try {
-                        samlssoServiceProviderDO.setX509Certificate(org.opensaml.xml.security.keyinfo.KeyInfoHelper.getCertificates(descriptor.getKeyInfo()).get(0));
-                        samlssoServiceProviderDO.setCertAlias(entityDescriptor.getEntityID());
-                    } catch (java.security.cert.CertificateException ex) {
-                        log.error("Error While setting Certificate and alias", ex);
-                    }catch(java.lang.Exception ex){
-                        log.error("Error While setting Certificate and alias", ex);
-                    }
+//                    try {
+//                        samlssoServiceProviderDO.setX509Certificate(org.opensaml.xml.security.keyinfo.KeyInfoHelper.getCertificates(descriptor.getKeyInfo()).get(0));
+//                        samlssoServiceProviderDO.setCertAlias(entityDescriptor.getEntityID());
+//                    } catch (java.security.cert.CertificateException ex) {
+//                        log.error("Error While setting Certificate and alias", ex);
+//                    }catch(java.lang.Exception ex){
+//                        log.error("Error While setting Certificate and alias", ex);
+//                    }
                 }
             }
         }

@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.builder.DefaultIDPMetadataBuilder;
@@ -30,11 +31,10 @@ import org.wso2.carbon.identity.application.common.IdentityApplicationManagement
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
-import org.wso2.carbon.identity.core.IdentityRegistryResources;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
-import org.wso2.carbon.idp.mgt.IdentityProviderSAMLException;
-import org.wso2.carbon.idp.mgt.MetadataException;
-import org.wso2.carbon.idp.mgt.util.MetadataConverter;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.IdentityProviderSAMLException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
+import org.wso2.carbon.idp.mgt.IdentityProviderManager;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
@@ -52,7 +52,7 @@ import java.io.StringWriter;
 /**
  * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config nad vise versa
  */
-public class SAMLMetadataConverter implements MetadataConverter {
+public class SAMLMetadataConverter {
 
     /**
      * Retrieves whether this property contains SAML Metadata     *
@@ -205,11 +205,10 @@ public class SAMLMetadataConverter implements MetadataConverter {
         return metadata;
     }
 
-    public String getMetadataString(FederatedAuthenticatorConfig federatedAuthenticatorConfig) throws IdentityProviderSAMLException {
+    public static String getMetadataString(FederatedAuthenticatorConfig federatedAuthenticatorConfig) throws IdentityProviderSAMLException {
 
         DefaultIDPMetadataBuilder builder = new DefaultIDPMetadataBuilder();
         try {
-
             String metadata = builder.build(federatedAuthenticatorConfig);
             return metadata;
         } catch (MetadataException ex) {
@@ -218,7 +217,7 @@ public class SAMLMetadataConverter implements MetadataConverter {
 
     }
 
-    public boolean canHandle(FederatedAuthenticatorConfig federatedAuthenticatorConfig) {
+    public static boolean canHandle(FederatedAuthenticatorConfig federatedAuthenticatorConfig) {
         if (federatedAuthenticatorConfig != null && federatedAuthenticatorConfig.getName()
                 .equals(IdentityApplicationConstants.Authenticator.SAML2SSO.NAME)) {
             return true;
@@ -237,7 +236,7 @@ public class SAMLMetadataConverter implements MetadataConverter {
         try {
 
             UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
-            String samlIdpPath = IdentityRegistryResources.SAMLIDP;
+            String samlIdpPath = IDPMetadataConstant.SAMLIDP;
             String path = samlIdpPath + idPName;
 
             try {
@@ -288,9 +287,9 @@ public class SAMLMetadataConverter implements MetadataConverter {
         try {
 
             UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
-            String identityPath = IdentityRegistryResources.IDENTITY;
-            String identityProvidersPath = IdentityRegistryResources.IDENTITYPROVIDER;
-            String samlIdpPath = IdentityRegistryResources.SAMLIDP;
+            String identityPath = IDPMetadataConstant.IDENTITY;
+            String identityProvidersPath = IDPMetadataConstant.IDENTITYPROVIDER;
+            String samlIdpPath = IDPMetadataConstant.SAMLIDP;
             String path = samlIdpPath + idpName;
             Resource resource;
             resource = registry.newResource();
@@ -345,5 +344,31 @@ public class SAMLMetadataConverter implements MetadataConverter {
         }
     }
 
+
+    public static String getResidentIDPMetadata(String tenantDomain) throws IdentityProviderManagementException {
+
+        IdentityProviderManager identityProviderManager = (IdentityProviderManager) IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
+        IdentityProvider residentIdentityProvider = identityProviderManager.getResidentIdP(tenantDomain);
+        FederatedAuthenticatorConfig[] federatedAuthenticatorConfigs = residentIdentityProvider.getFederatedAuthenticatorConfigs();
+        FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig = null;
+        for (int i = 0; i < federatedAuthenticatorConfigs.length; i++) {
+            if (federatedAuthenticatorConfigs[i].getName().equals(IdentityApplicationConstants.Authenticator.SAML2SSO.NAME)) {
+                samlFederatedAuthenticatorConfig = federatedAuthenticatorConfigs[i];
+                break;
+            }
+        }
+        if (samlFederatedAuthenticatorConfig != null) {
+            try {
+                    if (canHandle(samlFederatedAuthenticatorConfig)) {
+
+                        return getMetadataString(samlFederatedAuthenticatorConfig);
+                    }
+
+            } catch (IdentityProviderSAMLException e) {
+                throw new IdentityProviderManagementException(e.getMessage());
+            }
+        }
+        return null;
+    }
 
 }

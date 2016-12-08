@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity.idp.metadata.saml2.internal;
 
 import org.osgi.service.http.HttpService;
-import org.wso2.carbon.idp.mgt.IdpManager;
+import org.wso2.carbon.idp.mgt.IdpManagerService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
@@ -31,7 +31,7 @@ public class IDPMetadataSAMLServiceComponentHolder {
     private RealmService realmService;
     private ConfigurationContextService configCtxService;
     private HttpService httpService;
-    private IdpManager idpManager;
+    private IdpManagerService idpManager;
 
     public static IDPMetadataSAMLServiceComponentHolder getInstance() {
         return instance;
@@ -69,11 +69,11 @@ public class IDPMetadataSAMLServiceComponentHolder {
         this.httpService = httpService;
     }
 
-    public IdpManager getIdpManager() {
+    public IdpManagerService getIdpManager() {
         return idpManager;
     }
 
-    public void setIdpManager(IdpManager idpManager) {
+    public void setIdpManager(IdpManagerService idpManager) {
         this.idpManager = idpManager;
     }
 

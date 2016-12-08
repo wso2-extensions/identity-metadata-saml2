@@ -33,7 +33,7 @@ import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.ConfigElements;
 import org.wso2.carbon.identity.idp.metadata.saml2.CryptoProvider;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
-import org.wso2.carbon.idp.mgt.MetadataException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

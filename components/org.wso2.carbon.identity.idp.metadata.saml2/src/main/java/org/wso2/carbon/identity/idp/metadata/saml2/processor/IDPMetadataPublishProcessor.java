@@ -27,10 +27,8 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Ide
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityResponse;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataErrorResponse;
-import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
+import org.wso2.carbon.identity.idp.metadata.saml2.util.SAMLMetadataConverter;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
-import org.wso2.carbon.idp.mgt.IdentityProviderManager;
-
 
 /**
  * This class implements functionality to set metadata content to SAML2MetadataResponseBuilder
@@ -73,16 +71,14 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
             FrameworkException {
 
         String tennantDomain = identityRequest.getTenantDomain();
-        IdentityProviderManager identityProviderManager = (IdentityProviderManager) IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
         String metadata = null;
         try {
-            metadata = identityProviderManager.getResidentIDPMetadata(tennantDomain);
+            metadata = SAMLMetadataConverter.getResidentIDPMetadata(tennantDomain);
         } catch (IdentityProviderManagementException ex) {
             IdentityMessageContext context = new IdentityMessageContext(identityRequest);
             SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder responseBuilder = new SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder(context);
             responseBuilder.setMessage("Internal Server Error");
             return responseBuilder;
-
         }
         IdentityMessageContext context = new IdentityMessageContext(identityRequest);
         SAMLMetadataResponse.SAMLMetadataResponseBuilder responseBuilder = new SAMLMetadataResponse.SAMLMetadataResponseBuilder(context);

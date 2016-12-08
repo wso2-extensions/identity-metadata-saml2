@@ -48,6 +48,14 @@ public class HttpSAMLMetadataResponseFactory extends HttpIdentityResponseFactory
     }
 
     @Override
+    public HttpIdentityResponse.HttpIdentityResponseBuilder create(HttpIdentityResponse.HttpIdentityResponseBuilder
+                                                                           httpIdentityResponseBuilder,
+                                                                   IdentityResponse
+                                                                           identityResponse) {
+        return create(identityResponse);
+    }
+
+    @Override
     public HttpIdentityResponse.HttpIdentityResponseBuilder create(IdentityResponse identityResponse) {
 
         if (identityResponse instanceof SAMLMetadataResponse) {
@@ -69,11 +77,6 @@ public class HttpSAMLMetadataResponseFactory extends HttpIdentityResponseFactory
         builder.setContentType("application/xml");
         builder.setStatusCode(HttpServletResponse.SC_OK);
         return builder;
-    }
-
-    @Override
-    public void create(HttpIdentityResponse.HttpIdentityResponseBuilder httpIdentityResponseBuilder, IdentityResponse
-            identityResponse) {
     }
 
     private HttpIdentityResponse.HttpIdentityResponseBuilder sendErrorResponse(IdentityResponse identityResponse) {

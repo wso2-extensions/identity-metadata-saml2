@@ -26,9 +26,7 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Htt
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityProcessor;
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.HttpSAMLMetadataResponseFactory;
 import org.wso2.carbon.identity.idp.metadata.saml2.processor.IDPMetadataPublishProcessor;
-import org.wso2.carbon.idp.mgt.IdpManager;
-import org.wso2.carbon.idp.mgt.util.MetadataConverter;
-import org.wso2.carbon.identity.idp.metadata.saml2.util.SAMLMetadataConverter;
+import org.wso2.carbon.idp.mgt.IdpManagerService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
@@ -50,7 +48,7 @@ import org.wso2.carbon.utils.ConfigurationContextService;
  * cardinality="1..1" policy="dynamic" bind="setHttpService"
  * unbind="unsetHttpService"
  * @scr.reference name="IdentityProviderManager"
- * interface="org.wso2.carbon.idp.mgt.IdpManager" cardinality="1..1"
+ * interface="org.wso2.carbon.idp.mgt.IdpManagerService" cardinality="1..1"
  * policy="dynamic" bind="setIdpManager" unbind="unsetIdpManager"
  */
 
@@ -61,9 +59,8 @@ public class SAMLMetadataServiceComponent {
 
     protected void activate(ComponentContext context) {
 
-        MetadataConverter converter = new SAMLMetadataConverter();
-        context.getBundleContext().registerService(MetadataConverter.class.getName(), converter, null);
-        context.getBundleContext().registerService(IdentityProcessor.class.getName(), new IDPMetadataPublishProcessor(), null);
+        context.getBundleContext().registerService(IdentityProcessor.class.getName(), new IDPMetadataPublishProcessor
+                (), null);
         context.getBundleContext().registerService(HttpIdentityResponseFactory.class.getName(), new
                 HttpSAMLMetadataResponseFactory(), null);
         if (log.isDebugEnabled()) {
@@ -132,11 +129,11 @@ public class SAMLMetadataServiceComponent {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setHttpService(null);
     }
 
-    protected void unsetIdpManager(IdpManager idpManager) {
+    protected void unsetIdpManager(IdpManagerService idpManager) {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setIdpManager(null);
     }
 
-    protected void setIdpManager(IdpManager idpManager) {
+    protected void setIdpManager(IdpManagerService idpManager) {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setIdpManager(idpManager);
     }
 

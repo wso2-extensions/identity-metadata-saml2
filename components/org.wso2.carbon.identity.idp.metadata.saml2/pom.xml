@@ -47,27 +47,27 @@
             <artifactId>org.wso2.carbon.tenant.common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.identity.application.common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.identity.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.identity.base</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.idp.mgt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
         </dependency>
 
@@ -137,6 +137,7 @@
                             version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.identity.application.common.util;
                             version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.base;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.identity.core.handler;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.identity.core.util;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.idp.mgt; version="${carbon.identity.package.import.version.range}",

@@ -24,7 +24,7 @@ import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorC
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.core.handler.AbstractIdentityHandler;
-import org.wso2.carbon.idp.mgt.MetadataException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
 
 /**
  * This class defines methods that are used to convert a metadata String using saml2SSOFederatedAuthenticatedConfig

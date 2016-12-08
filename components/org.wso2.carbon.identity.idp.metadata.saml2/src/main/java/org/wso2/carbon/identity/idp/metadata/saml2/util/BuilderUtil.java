@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.XMLObjectBuilderFactory;
-import org.wso2.carbon.idp.mgt.MetadataException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
 import javax.xml.namespace.QName;
 
 

@@ -15,21 +15,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.carbon.identity.idp.metadata.saml2.Exception;
 
-package org.wso2.carbon.identity.idp.metadata.saml2;
+import org.wso2.carbon.identity.base.IdentityException;
 
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
+public class MetadataException extends IdentityException {
 
-public interface CryptoProvider {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Sign the base descriptor with the credential and also
-     * sets the key info in each element.
-     *
-     * @param baseDescriptor
-     * @throws org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException
-     */
-    public void signMetadata(EntityDescriptor baseDescriptor) throws MetadataException;
+    public MetadataException(String message) {
+        super(message);
+    }
+
+    public MetadataException(String message, Throwable t) {
+        super(message, t);
+    }
 
 }
