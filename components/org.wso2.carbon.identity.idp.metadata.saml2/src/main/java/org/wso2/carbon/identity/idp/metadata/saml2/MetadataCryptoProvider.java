@@ -32,7 +32,7 @@ import org.opensaml.xml.signature.X509Certificate;
 import org.opensaml.xml.signature.X509Data;
 import org.w3c.dom.Document;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
-import org.wso2.carbon.idp.mgt.MetadataException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 
 import javax.xml.parsers.DocumentBuilder;

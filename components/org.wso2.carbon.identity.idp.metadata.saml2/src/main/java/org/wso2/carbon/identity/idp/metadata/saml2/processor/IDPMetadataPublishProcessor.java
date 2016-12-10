@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.identity.idp.metadata.saml2.processor;
 
-import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.application.authentication.framework.exception.FrameworkException;
@@ -27,18 +26,24 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Ide
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityResponse;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataErrorResponse;
-import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
+import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataResponse;
+import org.wso2.carbon.identity.idp.metadata.saml2.util.SAMLMetadataConverter;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
-import org.wso2.carbon.idp.mgt.IdentityProviderManager;
-
 
 /**
  * This class implements functionality to set metadata content to SAML2MetadataResponseBuilder
  */
 
 public class IDPMetadataPublishProcessor extends IdentityProcessor {
+
     private static Log log = LogFactory.getLog(IDPMetadataPublishProcessor.class);
+
     private String relyingParty;
+    private SAMLMetadataConverter metadataConverter;
+
+    public IDPMetadataPublishProcessor() {
+        this.metadataConverter = new SAMLMetadataConverter();
+    }
 
     @Override
     public String getName() {
@@ -69,27 +74,24 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
         }
     }
 
-    public IdentityResponse.IdentityResponseBuilder process(IdentityRequest identityRequest) throws
-            FrameworkException {
+    public IdentityResponse.IdentityResponseBuilder process(IdentityRequest identityRequest) throws FrameworkException {
 
-        String tennantDomain = identityRequest.getTenantDomain();
-        IdentityProviderManager identityProviderManager = (IdentityProviderManager) IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
+        String tenantDomain = identityRequest.getTenantDomain();
         String metadata = null;
         try {
-            metadata = identityProviderManager.getResidentIDPMetadata(tennantDomain);
+            metadata = metadataConverter.getResidentIDPMetadata(tenantDomain);
         } catch (IdentityProviderManagementException ex) {
             IdentityMessageContext context = new IdentityMessageContext(identityRequest);
-            SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder responseBuilder = new SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder(context);
+            SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder responseBuilder = new
+                    SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder(context);
             responseBuilder.setMessage("Internal Server Error");
             return responseBuilder;
-
         }
         IdentityMessageContext context = new IdentityMessageContext(identityRequest);
-        SAMLMetadataResponse.SAMLMetadataResponseBuilder responseBuilder = new SAMLMetadataResponse.SAMLMetadataResponseBuilder(context);
+        SAMLMetadataResponse.SAMLMetadataResponseBuilder responseBuilder = new SAMLMetadataResponse
+                .SAMLMetadataResponseBuilder(context);
         responseBuilder.setMetadata(metadata);
         return responseBuilder;
 
     }
-
-
 }

@@ -29,7 +29,7 @@ import org.opensaml.xml.security.x509.X509Credential;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.util.KeyStoreManager;
-import org.wso2.carbon.idp.mgt.MetadataException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
 import org.wso2.carbon.security.keystore.KeyStoreAdmin;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
