@@ -17,42 +17,86 @@
  */
 package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.AXIOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
+import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
+import org.wso2.carbon.identity.application.common.model.Property;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.IdentityProviderSAMLException;
+import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.builder.DefaultIDPMetadataBuilder;
 import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.AXIOMUtil;
-import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
-import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
-import org.wso2.carbon.identity.application.common.model.Property;
-import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
-import org.wso2.carbon.identity.idp.metadata.saml2.Exception.IdentityProviderSAMLException;
-import org.wso2.carbon.identity.idp.metadata.saml2.Exception.MetadataException;
-import org.wso2.carbon.idp.mgt.IdentityProviderManager;
+import org.wso2.carbon.idp.mgt.IdpManagerService;
 import org.wso2.carbon.registry.core.Collection;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
 import org.wso2.carbon.registry.core.session.UserRegistry;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
+
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
 
 /**
- * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config nad vise versa
+ * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config nad vise
+ * versa
  */
 public class SAMLMetadataConverter {
+
+    public String getMetadataString(FederatedAuthenticatorConfig federatedAuthenticatorConfig) throws
+            IdentityProviderSAMLException {
+
+        DefaultIDPMetadataBuilder builder = new DefaultIDPMetadataBuilder();
+        try {
+            String metadata = builder.build(federatedAuthenticatorConfig);
+            return metadata;
+        } catch (MetadataException ex) {
+            throw new IdentityProviderSAMLException("Error invoking build in IDPMetadataBuilder", ex);
+        }
+
+    }
+
+    public String getResidentIDPMetadata(String tenantDomain) throws IdentityProviderManagementException {
+
+        IdpManagerService identityProviderManager = IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
+        IdentityProvider residentIdentityProvider = identityProviderManager.getResidentIdP(tenantDomain);
+        FederatedAuthenticatorConfig[] federatedAuthenticatorConfigs = residentIdentityProvider
+                .getFederatedAuthenticatorConfigs();
+        FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig = null;
+        for (int i = 0; i < federatedAuthenticatorConfigs.length; i++) {
+            if (federatedAuthenticatorConfigs[i].getName().equals(IdentityApplicationConstants.Authenticator.SAML2SSO
+                    .NAME)) {
+                samlFederatedAuthenticatorConfig = federatedAuthenticatorConfigs[i];
+                break;
+            }
+        }
+        if (samlFederatedAuthenticatorConfig != null) {
+            try {
+                if (canHandle(samlFederatedAuthenticatorConfig)) {
+                    updateAuthenticatorConfigForTenant(tenantDomain, samlFederatedAuthenticatorConfig);
+                    return getMetadataString(samlFederatedAuthenticatorConfig);
+                }
+
+            } catch (IdentityProviderSAMLException e) {
+                throw new IdentityProviderManagementException(e.getMessage());
+            }
+        }
+        return null;
+    }
 
     /**
      * Retrieves whether this property contains SAML Metadata     *
@@ -76,7 +120,6 @@ public class SAMLMetadataConverter {
         }
     }
 
-
     /**
      * Returns a FederatuedAuthenticatorConfigObject that is generated using metadata
      *
@@ -84,13 +127,15 @@ public class SAMLMetadataConverter {
      * @return FederatedAuthenticatorConfig
      * @throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException
      */
-    public FederatedAuthenticatorConfig getFederatedAuthenticatorConfig(Property properties[], StringBuilder builder) throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException {
+    public FederatedAuthenticatorConfig getFederatedAuthenticatorConfig(Property properties[], StringBuilder builder)
+            throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException {
 
 
         String metadata = "";
         for (int y = 0; y < properties.length; y++) {
 
-            if (properties[y] != null && properties[y].getName() != null && properties[y].getName().toString().equals("meta_data_saml")) {
+            if (properties[y] != null && properties[y].getName() != null && properties[y].getName().toString().equals
+                    ("meta_data_saml")) {
                 metadata = properties[y].getValue();
             }
         }
@@ -137,47 +182,48 @@ public class SAMLMetadataConverter {
                 for (int i = 0; i < ((Element) document.getElementsByTagName("IDPSSODescriptor").item(0))
                         .getElementsByTagName("KeyDescriptor").getLength(); i++) {
 
-                    if ((((Element) document.getElementsByTagName("IDPSSODescriptor").item(0))
-                            .getElementsByTagName("KeyDescriptor").item(i)).getNodeType() == Node.ELEMENT_NODE) {
+                    if ((((Element) document.getElementsByTagName("IDPSSODescriptor").item(0)).getElementsByTagName
+                            ("KeyDescriptor").item(i)).getNodeType() == Node.ELEMENT_NODE) {
 
                         if ("signing".equalsIgnoreCase(((Element) (((Element) document.
-                                getElementsByTagName("IDPSSODescriptor").item(0))
-                                .getElementsByTagName("KeyDescriptor").item(i))).getAttribute("use"))) {
+                                getElementsByTagName("IDPSSODescriptor").item(0)).getElementsByTagName
+                                ("KeyDescriptor").item(i))).getAttribute("use"))) {
 
                             if ((((Element) (((Element) document.getElementsByTagName("IDPSSODescriptor").
-                                    item(0))
-                                    .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").item(0)).
+                                    item(0)).getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName
+                                    ("KeyInfo").item(0)).
                                     getNodeType() == Node.ELEMENT_NODE) {
 
-                                if ((((Element) (((Element) (((Element) document.getElementsByTagName("IDPSSODescriptor")
-                                        .item(0))
-                                        .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
-                                        item(0))).getElementsByTagName("X509Data").item(0)).getNodeType() == Node.ELEMENT_NODE) {
+                                if ((((Element) (((Element) (((Element) document.getElementsByTagName
+                                        ("IDPSSODescriptor").item(0)).getElementsByTagName("KeyDescriptor").item(i)))
+                                        .getElementsByTagName("KeyInfo").
+                                        item(0))).getElementsByTagName("X509Data").item(0)).getNodeType() == Node
+                                        .ELEMENT_NODE) {
 
                                     if ((((Element) (((Element) (((Element) (((Element) document.getElementsByTagName
-                                            ("IDPSSODescriptor")
-                                            .item(0))
-                                            .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
+                                            ("IDPSSODescriptor").item(0)).getElementsByTagName("KeyDescriptor").item
+                                            (i))).getElementsByTagName("KeyInfo").
                                             item(0))).getElementsByTagName("X509Data").item(0))).
-                                            getElementsByTagName("X509Certificate").item(0)).getNodeType() == Node.ELEMENT_NODE) {
+                                            getElementsByTagName("X509Certificate").item(0)).getNodeType() == Node
+                                            .ELEMENT_NODE) {
 
-                                        String cert = ((Element) (((Element) (((Element) (((Element) (((Element) document.getElementsByTagName
-                                                ("IDPSSODescriptor")
-                                                .item(0))
-                                                .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
+                                        String cert = ((Element) (((Element) (((Element) (((Element) (((Element)
+                                                document.getElementsByTagName("IDPSSODescriptor").item(0))
+                                                .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName
+                                                ("KeyInfo").
                                                 item(0))).getElementsByTagName("X509Data").item(0))).
                                                 getElementsByTagName("X509Certificate").item(0))).getTextContent();
 
-                                        if (!(cert.contains("-----BEGIN CERTIFICATE-----") && cert.contains("-----END " +
-                                                "CERTIFICATE-----"))) {
+                                        if (!(cert.contains("-----BEGIN CERTIFICATE-----") && cert.contains
+                                                ("-----END" + " " + "CERTIFICATE-----"))) {
                                             cert = "\n-----BEGIN CERTIFICATE-----\n" + cert + "\n-----END " +
                                                     "CERTIFICATE-----\n";
                                         }
 
-                                        ((Element) (((Element) (((Element) (((Element) (((Element) document.getElementsByTagName
-                                                ("IDPSSODescriptor")
-                                                .item(0))
-                                                .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
+                                        ((Element) (((Element) (((Element) (((Element) (((Element) document
+                                                .getElementsByTagName("IDPSSODescriptor").item(0))
+                                                .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName
+                                                ("KeyInfo").
                                                 item(0))).getElementsByTagName("X509Data").item(0))).
                                                 getElementsByTagName("X509Certificate").item(0))).setTextContent(cert);
 
@@ -205,21 +251,9 @@ public class SAMLMetadataConverter {
         return metadata;
     }
 
-    public static String getMetadataString(FederatedAuthenticatorConfig federatedAuthenticatorConfig) throws IdentityProviderSAMLException {
-
-        DefaultIDPMetadataBuilder builder = new DefaultIDPMetadataBuilder();
-        try {
-            String metadata = builder.build(federatedAuthenticatorConfig);
-            return metadata;
-        } catch (MetadataException ex) {
-            throw new IdentityProviderSAMLException("Error invoking build in IDPMetadataBuilder", ex);
-        }
-
-    }
-
-    public static boolean canHandle(FederatedAuthenticatorConfig federatedAuthenticatorConfig) {
-        if (federatedAuthenticatorConfig != null && federatedAuthenticatorConfig.getName()
-                .equals(IdentityApplicationConstants.Authenticator.SAML2SSO.NAME)) {
+    public boolean canHandle(FederatedAuthenticatorConfig federatedAuthenticatorConfig) {
+        if (federatedAuthenticatorConfig != null && federatedAuthenticatorConfig.getName().equals
+                (IdentityApplicationConstants.Authenticator.SAML2SSO.NAME)) {
             return true;
         }
         return false;
@@ -235,7 +269,8 @@ public class SAMLMetadataConverter {
     public void deleteMetadataString(int tenantId, String idPName) throws IdentityProviderManagementException {
         try {
 
-            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
+            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService()
+                    .getGovernanceSystemRegistry(tenantId);
             String samlIdpPath = IDPMetadataConstant.SAMLIDP;
             String path = samlIdpPath + idPName;
 
@@ -259,7 +294,8 @@ public class SAMLMetadataConverter {
                         if (!isTransactionStarted) {
                             registry.rollbackTransaction();
                         }
-                        throw new IdentityProviderManagementException("Error while deleting metadata String in registry for " + idPName);
+                        throw new IdentityProviderManagementException("Error while deleting metadata String in " +
+                                "registry for " + idPName);
                     }
 
 
@@ -270,7 +306,8 @@ public class SAMLMetadataConverter {
 
 
         } catch (RegistryException e) {
-            throw new IdentityProviderManagementException("Error while setting a registry object in IdentityProviderManager");
+            throw new IdentityProviderManagementException("Error while setting a registry object in " +
+                    "IdentityProviderManager");
         }
 
     }
@@ -282,11 +319,13 @@ public class SAMLMetadataConverter {
      * @throws IdentityProviderManagementException Error when deleting Identity Provider
      *                                             information from registry
      */
-    public void saveMetadataString(int tenantId, String idpName, String metadata) throws IdentityProviderManagementException {
+    public void saveMetadataString(int tenantId, String idpName, String metadata) throws
+            IdentityProviderManagementException {
 
         try {
 
-            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry(tenantId);
+            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService()
+                    .getGovernanceSystemRegistry(tenantId);
             String identityPath = IDPMetadataConstant.IDENTITY;
             String identityProvidersPath = IDPMetadataConstant.IDENTITYPROVIDER;
             String samlIdpPath = IDPMetadataConstant.SAMLIDP;
@@ -340,35 +379,34 @@ public class SAMLMetadataConverter {
             }
 
         } catch (RegistryException e) {
-            throw new IdentityProviderManagementException("Error while setting a registry object in IdentityProviderManager");
+            throw new IdentityProviderManagementException("Error while setting a registry object in " +
+                    "IdentityProviderManager");
         }
     }
 
+    private void updateAuthenticatorConfigForTenant(String tenantDomain, FederatedAuthenticatorConfig
+            federatedAuthenticatorConfig) {
 
-    public static String getResidentIDPMetadata(String tenantDomain) throws IdentityProviderManagementException {
-
-        IdentityProviderManager identityProviderManager = (IdentityProviderManager) IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
-        IdentityProvider residentIdentityProvider = identityProviderManager.getResidentIdP(tenantDomain);
-        FederatedAuthenticatorConfig[] federatedAuthenticatorConfigs = residentIdentityProvider.getFederatedAuthenticatorConfigs();
-        FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig = null;
-        for (int i = 0; i < federatedAuthenticatorConfigs.length; i++) {
-            if (federatedAuthenticatorConfigs[i].getName().equals(IdentityApplicationConstants.Authenticator.SAML2SSO.NAME)) {
-                samlFederatedAuthenticatorConfig = federatedAuthenticatorConfigs[i];
-                break;
-            }
+        if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equalsIgnoreCase(tenantDomain)) {
+            return;
         }
-        if (samlFederatedAuthenticatorConfig != null) {
-            try {
-                    if (canHandle(samlFederatedAuthenticatorConfig)) {
 
-                        return getMetadataString(samlFederatedAuthenticatorConfig);
-                    }
+        String tenantURLPath = "/t/" + tenantDomain;
+        updateFederatedAuthenticatorConfigPropertyValue(federatedAuthenticatorConfig, IdentityApplicationConstants
+                .Authenticator.SAML2SSO.SSO_URL, tenantURLPath);
+        updateFederatedAuthenticatorConfigPropertyValue(federatedAuthenticatorConfig, IdentityApplicationConstants
+                .Authenticator.SAML2SSO.LOGOUT_REQ_URL, tenantURLPath);
 
-            } catch (IdentityProviderSAMLException e) {
-                throw new IdentityProviderManagementException(e.getMessage());
-            }
-        }
-        return null;
     }
 
+    private void updateFederatedAuthenticatorConfigPropertyValue(FederatedAuthenticatorConfig
+                                                                         federatedAuthenticatorConfig, String name,
+                                                                 String tenantURLPath) {
+
+        for (Property property : federatedAuthenticatorConfig.getProperties()) {
+            if (name.equals(property.getName())) {
+                property.setValue(property.getValue() + tenantURLPath);
+            }
+        }
+    }
 }
