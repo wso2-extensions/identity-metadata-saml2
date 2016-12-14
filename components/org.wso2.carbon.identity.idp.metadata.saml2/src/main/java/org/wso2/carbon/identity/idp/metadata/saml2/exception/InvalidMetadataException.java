@@ -1,4 +1,4 @@
-package org.wso2.carbon.identity.idp.metadata.saml2.Exception;
+package org.wso2.carbon.identity.idp.metadata.saml2.exception;
 
 /**
  * Created by pasindu on 11/10/16.
