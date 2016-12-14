@@ -67,11 +67,8 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
 
     @Override
     public boolean canHandle(IdentityRequest identityRequest) {
-        if (identityRequest.getPathInfo().contains("/metadata/saml2")) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return identityRequest.getPathInfo() != null && identityRequest.getPathInfo().contains("/metadata/saml2");
     }
 
     public IdentityResponse.IdentityResponseBuilder process(IdentityRequest identityRequest) throws FrameworkException {
