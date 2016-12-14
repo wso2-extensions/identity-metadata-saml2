@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.builder.DefaultIDPMetadataBuilder;
@@ -48,6 +49,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.util.List;
 
 /**
  * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config nad vise versa
@@ -117,6 +119,61 @@ public class SAMLMetadataConverter implements MetadataConverter {
         return federatedAuthenticatorConfigMetadata;
     }
 
+    private Node getIDPSSODescriptor(Document document) {
+
+        if (document.getElementsByTagName("IDPSSODescriptor").item(0) != null) {
+            if (document.getElementsByTagName("IDPSSODescriptor").item(0).getNodeType() == Node.ELEMENT_NODE) {
+                return document.getElementsByTagName("IDPSSODescriptor").item(0);
+            }
+
+        } else if (document.getElementsByTagName("md:IDPSSODescriptor").item(0) != null) {
+            if (document.getElementsByTagName("md:IDPSSODescriptor").item(0).getNodeType() == Node.ELEMENT_NODE) {
+                return document.getElementsByTagName("md:IDPSSODescriptor").item(0);
+            }
+        }
+        return null;
+    }
+
+    private NodeList getKeyDescriptors(Element idpSSODescriptor) {
+
+        if (idpSSODescriptor.getElementsByTagName("KeyDescriptor").item(0) != null) {
+            return idpSSODescriptor.getElementsByTagName("KeyDescriptor");
+        } else if (idpSSODescriptor.getElementsByTagName("md:KeyDescriptor").item(0) != null) {
+            return idpSSODescriptor.getElementsByTagName("md:KeyDescriptor");
+        }
+        return null;
+    }
+
+    private Node getKeyInfoImpl(Element keyDescriptor) {
+
+        if (keyDescriptor.getElementsByTagName("KeyInfo").item(0) != null) {
+            return keyDescriptor.getElementsByTagName("KeyInfo").item(0);
+        } else if (keyDescriptor.getElementsByTagName("ds:KeyInfo").item(0) != null) {
+            return keyDescriptor.getElementsByTagName("ds:KeyInfo").item(0);
+        }
+        return null;
+    }
+
+    private Node getX509Data(Element keyInfo) {
+
+        if (keyInfo.getElementsByTagName("X509Data").item(0) != null) {
+            return keyInfo.getElementsByTagName("X509Data").item(0);
+        } else if (keyInfo.getElementsByTagName("ds:X509Data").item(0) != null) {
+            return keyInfo.getElementsByTagName("ds:X509Data").item(0);
+        }
+        return null;
+    }
+
+    private Node getX509Certificate(Element X509Data) {
+
+        if (X509Data.getElementsByTagName("X509Certificate").item(0) != null) {
+            return X509Data.getElementsByTagName("X509Certificate").item(0);
+        } else if (X509Data.getElementsByTagName("ds:X509Certificate").item(0) != null) {
+            return X509Data.getElementsByTagName("ds:X509Certificate").item(0);
+        }
+        return null;
+    }
+
     /**
      * If certificate is available, it's converted to PEM format
      */
@@ -132,55 +189,39 @@ public class SAMLMetadataConverter implements MetadataConverter {
             document = builder.parse(new ByteArrayInputStream(metadataOriginal.getBytes()));
             document.getDocumentElement().normalize();
 
-            if (document.getElementsByTagName("IDPSSODescriptor").item(0).getNodeType() == Node.ELEMENT_NODE) {
+            if (this.getIDPSSODescriptor(document) != null && this.getKeyDescriptors((Element) this.getIDPSSODescriptor
+                    (document)) != null) {
 
-                for (int i = 0; i < ((Element) document.getElementsByTagName("IDPSSODescriptor").item(0))
-                        .getElementsByTagName("KeyDescriptor").getLength(); i++) {
+                for (int i = 0; i < this.getKeyDescriptors((Element) this.getIDPSSODescriptor(document)).getLength(); i++) {
 
-                    if ((((Element) document.getElementsByTagName("IDPSSODescriptor").item(0))
-                            .getElementsByTagName("KeyDescriptor").item(i)).getNodeType() == Node.ELEMENT_NODE) {
+                    if ((this.getKeyDescriptors((Element) this.getIDPSSODescriptor(document)).item(i)).getNodeType() == Node.ELEMENT_NODE) {
 
-                        if ("signing".equalsIgnoreCase(((Element) (((Element) document.
-                                getElementsByTagName("IDPSSODescriptor").item(0))
-                                .getElementsByTagName("KeyDescriptor").item(i))).getAttribute("use"))) {
+                        if ("signing".equalsIgnoreCase(((Element) (this.getKeyDescriptors((Element) this
+                                .getIDPSSODescriptor(document)).item(i))).getAttribute("use"))) {
 
-                            if ((((Element) (((Element) document.getElementsByTagName("IDPSSODescriptor").
-                                    item(0))
-                                    .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").item(0)).
-                                    getNodeType() == Node.ELEMENT_NODE) {
+                            if (this.getKeyInfoImpl((Element) this.getKeyDescriptors((Element) this
+                                    .getIDPSSODescriptor(document)).item(i)) != null) {
 
-                                if ((((Element) (((Element) (((Element) document.getElementsByTagName("IDPSSODescriptor")
-                                        .item(0))
-                                        .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
-                                        item(0))).getElementsByTagName("X509Data").item(0)).getNodeType() == Node.ELEMENT_NODE) {
+                                if (this.getX509Data((Element) this.getKeyInfoImpl((Element) this.getKeyDescriptors((Element)
+                                        this
+                                                .getIDPSSODescriptor(document)).item(i))) != null) {
 
-                                    if ((((Element) (((Element) (((Element) (((Element) document.getElementsByTagName
-                                            ("IDPSSODescriptor")
-                                            .item(0))
-                                            .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
-                                            item(0))).getElementsByTagName("X509Data").item(0))).
-                                            getElementsByTagName("X509Certificate").item(0)).getNodeType() == Node.ELEMENT_NODE) {
+                                    if (this.getX509Certificate((Element) this.getX509Data((Element) this.getKeyInfoImpl(
+                                            (Element) this.getKeyDescriptors((Element)
+                                                    this.getIDPSSODescriptor(document)).item(i)))) != null) {
 
-                                        String cert = ((Element) (((Element) (((Element) (((Element) (((Element) document.getElementsByTagName
-                                                ("IDPSSODescriptor")
-                                                .item(0))
-                                                .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
-                                                item(0))).getElementsByTagName("X509Data").item(0))).
-                                                getElementsByTagName("X509Certificate").item(0))).getTextContent();
+                                        String cert = this.getX509Certificate((Element) this.getX509Data((Element) this
+                                                .getKeyInfoImpl((Element) this.getKeyDescriptors((Element)
+                                                        this.getIDPSSODescriptor(document)).item(i)))).getTextContent();
 
                                         if (!(cert.contains("-----BEGIN CERTIFICATE-----") && cert.contains("-----END " +
                                                 "CERTIFICATE-----"))) {
                                             cert = "\n-----BEGIN CERTIFICATE-----\n" + cert + "\n-----END " +
                                                     "CERTIFICATE-----\n";
                                         }
-
-                                        ((Element) (((Element) (((Element) (((Element) (((Element) document.getElementsByTagName
-                                                ("IDPSSODescriptor")
-                                                .item(0))
-                                                .getElementsByTagName("KeyDescriptor").item(i))).getElementsByTagName("KeyInfo").
-                                                item(0))).getElementsByTagName("X509Data").item(0))).
-                                                getElementsByTagName("X509Certificate").item(0))).setTextContent(cert);
-
+                                        this.getX509Certificate((Element) this.getX509Data((Element) this.getKeyInfoImpl(
+                                                (Element) this.getKeyDescriptors((Element)
+                                                        this.getIDPSSODescriptor(document)).item(i)))).setTextContent(cert);
                                     }
                                 }
                             }
