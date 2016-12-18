@@ -171,8 +171,6 @@ public class Parser {
                     samlssoServiceProviderDO.setEnableAttributesByDefault(true);
                 }
             }
-        } else {
-            throw new InvalidMetadataException("Invalid metadata content, no Assertion Consumer URL found");
         }
     }
 
