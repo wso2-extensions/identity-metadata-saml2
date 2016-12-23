@@ -61,6 +61,11 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
     }
 
     @Override
+    public String getRelyingPartyId(IdentityMessageContext identityMessageContext) {
+        return getRelyingPartyId();
+    }
+
+    @Override
     public boolean canHandle(IdentityRequest identityRequest) {
         if (identityRequest.getRequestURI().contains("/metadata/saml2")) {
             return true;
