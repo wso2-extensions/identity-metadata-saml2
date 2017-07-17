@@ -103,7 +103,7 @@ public class Parser {
     }
 
     private void setClaims(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
-        List<AttributeConsumingService> services = new ArrayList<>();
+        List<AttributeConsumingService> services;
         services = spssoDescriptor.getAttributeConsumingServices();
         if (services != null && services.size() > 0) {
             //assuming that only one AttrbuteComsumingIndex exists
@@ -135,8 +135,6 @@ public class Parser {
                     foundSingleLogoutServicePostBinding = true;
                     break;
                 }
-            }
-            if (!foundSingleLogoutServicePostBinding) {
             }
             samlssoServiceProviderDO.setSloRequestURL(singleLogoutServices.get(0).getLocation());
             samlssoServiceProviderDO.setSloResponseURL(singleLogoutServices.get(0).getResponseLocation());//chnaged

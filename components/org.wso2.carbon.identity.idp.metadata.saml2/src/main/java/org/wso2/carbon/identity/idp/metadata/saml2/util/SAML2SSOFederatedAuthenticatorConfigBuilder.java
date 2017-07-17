@@ -206,9 +206,9 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                                 } catch (Exception ex) {
                                     log.error("Error !!!!", ex);
                                 }
-                                if (use != null && use.equals("SIGNING")) {
+                                if (use.equals("SIGNING")) {
                                     properties[10].setValue("true");
-                                } else if (use != null && use.equals("ENCRYPTION")) {
+                                } else if (use.equals("ENCRYPTION")) {
                                     properties[9].setValue("true");
                                 }
                             }
