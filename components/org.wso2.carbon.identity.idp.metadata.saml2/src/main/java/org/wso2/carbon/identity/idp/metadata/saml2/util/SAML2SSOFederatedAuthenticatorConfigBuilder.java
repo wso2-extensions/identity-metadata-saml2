@@ -30,6 +30,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SAML2SSOFederatedAuthenticatorConfigBuilder {
     private static Log log = LogFactory.getLog(SAML2SSOFederatedAuthenticatorConfigBuilder.class);
+    private static final String IDPSSODescriptor_SIGNING = "SIGNING";
+    private static final String IDPSSODescriptor_ENCRYPTION = "ENCRYPTION";
 
     /**
      * Convert metadata String to entityDescriptor
@@ -206,9 +208,9 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                                 } catch (Exception ex) {
                                     log.error("Error !!!!", ex);
                                 }
-                                if (use.equals("SIGNING")) {
+                                if (use.equals(IDPSSODescriptor_SIGNING)) {
                                     properties[10].setValue("true");
-                                } else if (use.equals("ENCRYPTION")) {
+                                } else if (use.equals(IDPSSODescriptor_ENCRYPTION)) {
                                     properties[9].setValue("true");
                                 }
                             }
