@@ -405,7 +405,9 @@ public class SAMLMetadataConverter {
 
         for (Property property : federatedAuthenticatorConfig.getProperties()) {
             if (name.equals(property.getName())) {
-                property.setValue(property.getValue() + tenantURLPath);
+                if (!property.getValue().contains(tenantURLPath)) {
+                    property.setValue(property.getValue() + tenantURLPath);
+                }
             }
         }
     }
