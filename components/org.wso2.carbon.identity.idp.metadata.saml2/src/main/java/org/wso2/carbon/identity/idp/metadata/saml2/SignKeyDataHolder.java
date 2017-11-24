@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
+import org.apache.commons.lang.StringUtils;
+import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,10 +37,18 @@ import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import javax.crypto.SecretKey;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -50,11 +60,18 @@ import java.util.Collection;
 
 public class SignKeyDataHolder implements X509Credential {
 
+    public static final String SECURITY_SAML_SIGN_KEY_STORE_LOCATION = "Security.SAMLSignKeyStore.Location";
+    public static final String SECURITY_SAML_SIGN_KEY_STORE_TYPE = "Security.SAMLSignKeyStore.Type";
+    public static final String SECURITY_SAML_SIGN_KEY_STORE_PASSWORD = "Security.SAMLSignKeyStore.Password";
+    public static final String SECURITY_SAML_SIGN_KEY_STORE_KEY_ALIAS = "Security.SAMLSignKeyStore.KeyAlias";
+    public static final String SECURITY_SAML_SIGN_KEY_STORE_KEY_PASSWORD = "Security.SAMLSignKeyStore.KeyPassword";
+
     private String signatureAlgorithm = null;
 
     private X509Certificate[] issuerCerts = null;
 
-    private PrivateKey issuerPK = null;
+    private PrivateKey issuerPrivateKey = null;
+    private static KeyStore superTenantSignKeyStore = null;
 
     private static Log log = LogFactory.getLog(SignKeyDataHolder.class);
 
@@ -62,10 +79,6 @@ public class SignKeyDataHolder implements X509Credential {
      * Represent OpenSAML compatible certificate credential
      */
     public SignKeyDataHolder() throws MetadataException {
-        String keyAlias;
-        KeyStoreAdmin keyAdmin;
-        KeyStoreManager keyMan;
-        Certificate[] certificates;
         int tenantID;
         String userTenantDomain;
 
@@ -78,50 +91,19 @@ public class SignKeyDataHolder implements X509Credential {
             }
 
             if (tenantID != MultitenantConstants.SUPER_TENANT_ID) {
-                String keyStoreName = userTenantDomain.trim().replace(".", "-") + ".jks";
-                keyAlias = userTenantDomain;
-                keyMan = KeyStoreManager.getInstance(tenantID);
-                File f;
-
-                KeyStore keyStore = keyMan.getKeyStore(keyStoreName);
-                issuerPK = (PrivateKey) keyMan.getPrivateKey(keyStoreName, userTenantDomain);
-                certificates = keyStore.getCertificateChain(keyAlias);
-                issuerCerts = new X509Certificate[certificates.length];
-
-                int i = 0;
-                for (Certificate certificate : certificates) {
-                    issuerCerts[i++] = (X509Certificate) certificate;
+                initializeKeyDataForTenant(tenantID, userTenantDomain);
+            } else {
+                if (isSignKeyStoreConfigured()) {
+                    initializeKeyDataForSuperTenantFromSignKeyStore();
+                } else {
+                    initializeKeyDataForSuperTenantFromSystemKeyStore();
                 }
+            }
 
-                signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
-
-                String pubKeyAlgo = issuerCerts[0].getPublicKey().getAlgorithm();
-                if (pubKeyAlgo.equalsIgnoreCase("DSA")) {
-                    signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_DSA;
-                }
+            if (tenantID != MultitenantConstants.SUPER_TENANT_ID) {
 
             } else {
-                keyAlias = ServerConfiguration.getInstance().getFirstProperty("Security.KeyStore.KeyAlias");
 
-                keyAdmin = new KeyStoreAdmin(tenantID, IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService()
-                        .getGovernanceSystemRegistry());
-                keyMan = KeyStoreManager.getInstance(tenantID);
-
-                issuerPK = (PrivateKey) keyAdmin.getPrivateKey(keyAlias, true);
-                certificates = keyMan.getPrimaryKeyStore().getCertificateChain(keyAlias);
-                issuerCerts = new X509Certificate[certificates.length];
-
-                int i = 0;
-                for (Certificate certificate : certificates) {
-                    issuerCerts[i++] = (X509Certificate) certificate;
-                }
-
-                signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
-
-                String pubKeyAlgo = issuerCerts[0].getPublicKey().getAlgorithm();
-                if (pubKeyAlgo.equalsIgnoreCase("DSA")) {
-                    signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_DSA;
-                }
             }
 
         } catch (Exception e) {
@@ -129,6 +111,157 @@ public class SignKeyDataHolder implements X509Credential {
         }
 
     }
+
+    /**
+     * Set parameters needed for build Sign Key from the tenant KeyStore
+     *
+     * @param tenantID
+     * @param tenantDomain
+     * @throws Exception
+     */
+    private void initializeKeyDataForTenant(int tenantID, String tenantDomain) throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Key Data for tenant: " + tenantDomain);
+        }
+
+        String keyStoreName = tenantDomain.trim().replace(".", "-") + ".jks";
+        String keyAlias = tenantDomain;
+        KeyStoreManager keyMan = KeyStoreManager.getInstance(tenantID);
+
+        KeyStore keyStore = keyMan.getKeyStore(keyStoreName);
+        issuerPrivateKey = (PrivateKey) keyMan.getPrivateKey(keyStoreName, tenantDomain);
+
+        Certificate[] certificates = keyStore.getCertificateChain(keyAlias);
+        issuerCerts = Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
+
+        signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
+        String pubKeyAlgo = issuerCerts[0].getPublicKey().getAlgorithm();
+        if ("DSA".equalsIgnoreCase(pubKeyAlgo)) {
+            signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_DSA;
+        }
+    }
+
+    /**
+     * Set parameters needed for build Sign Key from the Sign KeyStore which is defined under Security.KeyStore in
+     * carbon.xml
+     *
+     * @throws Exception
+     */
+    private void initializeKeyDataForSuperTenantFromSystemKeyStore() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Key Data for super tenant using system key store");
+        }
+
+        String keyAlias = ServerConfiguration.getInstance().getFirstProperty("Security.KeyStore.KeyAlias");
+        if (StringUtils.isBlank(keyAlias)) {
+            throw new IdentityException("Invalid file configurations. The key alias is not found.");
+        }
+
+        KeyStoreAdmin keyAdmin = new KeyStoreAdmin(MultitenantConstants.SUPER_TENANT_ID,
+                IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry());
+        KeyStoreManager keyMan = KeyStoreManager.getInstance(MultitenantConstants.SUPER_TENANT_ID);
+        issuerPrivateKey = (PrivateKey) keyAdmin.getPrivateKey(keyAlias, true);
+
+        Certificate[] certificates = keyMan.getPrimaryKeyStore().getCertificateChain(keyAlias);
+        issuerCerts = Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
+
+        signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
+        String pubKeyAlgo = issuerCerts[0].getPublicKey().getAlgorithm();
+        if ("DSA".equalsIgnoreCase(pubKeyAlgo)) {
+            signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_DSA;
+        }
+    }
+
+    /**
+     * Check whether separate configurations for sign KeyStore available
+     *
+     * @return true if necessary configurations are defined for sign KeyStore; false otherwise.
+     */
+    private boolean isSignKeyStoreConfigured() {
+        String keyStoreLocation = ServerConfiguration.getInstance().getFirstProperty(
+                SECURITY_SAML_SIGN_KEY_STORE_LOCATION);
+        String keyStoreType = ServerConfiguration.getInstance().getFirstProperty(
+                SECURITY_SAML_SIGN_KEY_STORE_TYPE);
+        String keyStorePassword = ServerConfiguration.getInstance().getFirstProperty(
+                SECURITY_SAML_SIGN_KEY_STORE_PASSWORD);
+        String keyAlias = ServerConfiguration.getInstance().getFirstProperty(
+                SECURITY_SAML_SIGN_KEY_STORE_KEY_ALIAS);
+        String keyPassword = ServerConfiguration.getInstance().getFirstProperty(
+                SECURITY_SAML_SIGN_KEY_STORE_KEY_PASSWORD);
+
+        return StringUtils.isNotBlank(keyStoreLocation) && StringUtils.isNotBlank(keyStoreType)
+                && StringUtils.isNotBlank(keyStorePassword) && StringUtils.isNotBlank(keyAlias)
+                && StringUtils.isNotBlank(keyPassword);
+    }
+
+    /**
+     * Set parameters needed for build Sign Key from the Sign KeyStore which is defined under Security.SAMLSignKeyStore
+     * in carbon.xml
+     *
+     * @throws IdentityException
+     */
+    private void initializeKeyDataForSuperTenantFromSignKeyStore() throws IdentityException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing Key Data for super tenant using separate sign key store");
+        }
+
+        try {
+            if (superTenantSignKeyStore == null) {
+
+                String keyStoreLocation = ServerConfiguration.getInstance().getFirstProperty(
+                        SECURITY_SAML_SIGN_KEY_STORE_LOCATION);
+                try (FileInputStream is = new FileInputStream(keyStoreLocation)) {
+                    String keyStoreType = ServerConfiguration.getInstance().getFirstProperty(
+                            SECURITY_SAML_SIGN_KEY_STORE_TYPE);
+                    KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+
+                    char[] keyStorePassword = ServerConfiguration.getInstance().getFirstProperty(
+                            SECURITY_SAML_SIGN_KEY_STORE_PASSWORD).toCharArray();
+                    keyStore.load(is, keyStorePassword);
+
+                    superTenantSignKeyStore = keyStore;
+
+                } catch (FileNotFoundException e) {
+                    throw new IdentityException("Unable to locate keystore", e);
+                } catch (IOException e) {
+                    throw new IdentityException("Unable to read keystore", e);
+                } catch (CertificateException e) {
+                    throw new IdentityException("Unable to read certificate", e);
+                }
+            }
+
+            String keyAlias = ServerConfiguration.getInstance().getFirstProperty(
+                    SECURITY_SAML_SIGN_KEY_STORE_KEY_ALIAS);
+            char[] keyPassword = ServerConfiguration.getInstance().getFirstProperty(
+                    SECURITY_SAML_SIGN_KEY_STORE_KEY_PASSWORD).toCharArray();
+            Key key = superTenantSignKeyStore.getKey(keyAlias, keyPassword);
+
+            if (key instanceof PrivateKey) {
+                issuerPrivateKey = (PrivateKey) key;
+
+                Certificate[] certificates = superTenantSignKeyStore.getCertificateChain(keyAlias);
+                issuerCerts = Arrays.copyOf(certificates, certificates.length, X509Certificate[].class);
+
+                signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_RSA;
+                Certificate cert = superTenantSignKeyStore.getCertificate(keyAlias);
+                PublicKey publicKey = cert.getPublicKey();
+                String pubKeyAlgo = publicKey.getAlgorithm();
+                if ("DSA".equalsIgnoreCase(pubKeyAlgo)) {
+                    signatureAlgorithm = XMLSignature.ALGO_ID_SIGNATURE_DSA;
+                }
+            } else {
+                throw new IdentityException("Configured signing KeyStore private key is invalid");
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new IdentityException("Unable to load algorithm", e);
+        } catch (UnrecoverableKeyException e) {
+            throw new IdentityException("Unable to load key", e);
+        } catch (KeyStoreException e) {
+            throw new IdentityException("Unable to load keystore", e);
+        }
+    }
+
 
     public Collection<X509CRL> getCRLs() {
         return null;
@@ -159,7 +292,7 @@ public class SignKeyDataHolder implements X509Credential {
     }
 
     public PrivateKey getPrivateKey() {
-        return issuerPK;
+        return issuerPrivateKey;
     }
 
     public PublicKey getPublicKey() {
