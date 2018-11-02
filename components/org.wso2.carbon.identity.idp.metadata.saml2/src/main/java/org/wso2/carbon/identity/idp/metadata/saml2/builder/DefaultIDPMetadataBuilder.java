@@ -200,6 +200,18 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
         idpSsoDesc.getSingleLogoutServices().add(sloServiceDesc);
     }
 
+    public void buildArtifactResolutionService(IDPSSODescriptor idpSsoDesc,
+                                               FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
+        ArtifactResolutionService aresServiceDesc = BuilderUtil
+                .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.ARTIFACTRESSERVICE_DESCRIPTOR, "");
+        aresServiceDesc.setBinding(IDPMetadataConstant.SOAP_SAML2);
+        aresServiceDesc.setLocation(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.ARTIFACT_RESOLVE_URL).getValue());
+        aresServiceDesc.setIndex(1);
+        idpSsoDesc.getArtifactResolutionServices().add(aresServiceDesc);
+
+    }
+
     private DateTime validityPeriod(long timePeriod, char unit) {
 
         switch (unit) {

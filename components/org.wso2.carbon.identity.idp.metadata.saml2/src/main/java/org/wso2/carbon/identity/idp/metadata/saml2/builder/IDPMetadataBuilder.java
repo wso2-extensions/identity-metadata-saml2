@@ -43,6 +43,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
         buildSingleSignOnService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildNameIdFormat(idpSsoDesc);
         buildSingleLogOutService(idpSsoDesc, samlFederatedAuthenticatorConfig);
+        buildArtifactResolutionService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         entityDescriptor.getRoleDescriptors().add(idpSsoDesc);
         buildKeyDescriptor(entityDescriptor);
         buildExtensions(idpSsoDesc);
@@ -74,6 +75,8 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
     protected abstract void buildSingleSignOnService(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException;
 
     protected abstract void buildSingleLogOutService(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException;
+
+    protected abstract void buildArtifactResolutionService(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException;
 
     protected abstract void buildExtensions(IDPSSODescriptor idpSsoDesc) throws MetadataException;
 
