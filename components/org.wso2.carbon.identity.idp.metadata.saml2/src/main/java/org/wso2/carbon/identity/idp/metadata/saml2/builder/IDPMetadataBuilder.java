@@ -99,10 +99,12 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     private Property getFederatedAuthenticatorConfigProperty(
             FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig, String name) {
-
-        for (Property property : samlFederatedAuthenticatorConfig.getProperties()) {
-            if (name.equals(property.getName())) {
-                return property;
+        Property[] properties = samlFederatedAuthenticatorConfig.getProperties();
+        if (properties != null) {
+            for (Property property : properties) {
+                if (name != null && property != null && name.equals(property.getName())) {
+                    return property;
+                }
             }
         }
         return null;
@@ -129,35 +131,60 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     protected abstract String marshallDescriptor(EntityDescriptor entityDescriptor) throws MetadataException;
 
+    /***
+     *  Set the validity period in IDPSSODescriptor loading the value from Federated Authenticator Configuration
+     * @param idpSsoDesc IDPSSODescriptor
+     * @param samlFederatedAuthenticatorConfig Federated Authenticator Configuration
+     * @throws MetadataException
+     */
     protected void setValidityPeriod(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig
             samlFederatedAuthenticatorConfig) throws MetadataException {
 
         try {
             DateTime currentTime = DateTime.now();
-            int validityPeriod = Integer.parseInt(getFederatedAuthenticatorConfigProperty(
-                    samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.
-                            SAML_METADATA_VALIDITY_PERIOD).getValue());
+            String validiyPeriodStr = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                    IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_VALIDITY_PERIOD).getValue();
+            if (validiyPeriodStr == null) {
+                throw new MetadataException("Setting validity period failed. Null value found.");
+            }
+            int validityPeriod = Integer.parseInt(validiyPeriodStr);
             DateTime validUntil = new DateTime(currentTime.getMillis() + validityPeriod * ONE_MINUTE_IN_MILLIS);
             idpSsoDesc.setValidUntil(validUntil);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             throw new MetadataException("Setting validity period failed.", e);
         }
     }
 
+    /***
+     *  Enable/disable metadata signing based on SAML Federated Authenticator Configuration
+     * @param samlFederatedAuthenticatorConfig SAML Federated Authenticator Configuration
+     */
     protected void setSamlMetadataSigningEnabled(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) {
         samlMetadataSigningEnabled = Boolean.parseBoolean(getFederatedAuthenticatorConfigProperty(
                 samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.
                         SAML_METADATA_SIGNING_ENABLED).getValue());
     }
 
+    /***
+     * Get SAML metadata signing enabled flag
+     * @return SAML metadata signing enabled
+     */
     protected boolean getSamlMetadataSigningEnabled() {
         return samlMetadataSigningEnabled;
     }
 
+    /***
+     *
+     * @return Value of wantAUthnRequestSigned flag
+     */
     public boolean isWantAuthRequestSigned() {
         return wantAuthRequestSigned;
     }
 
+    /***
+     * Set the value of wantAUthnRequestSigned flag
+     * @param wantAuthRequestSigned
+     */
     public void setWantAuthRequestSigned(boolean wantAuthRequestSigned) {
         this.wantAuthRequestSigned = wantAuthRequestSigned;
     }
