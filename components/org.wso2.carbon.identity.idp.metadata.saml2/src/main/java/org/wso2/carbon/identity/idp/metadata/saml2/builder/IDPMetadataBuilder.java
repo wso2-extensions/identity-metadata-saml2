@@ -18,34 +18,72 @@
 
 package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
+import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
 import org.wso2.carbon.identity.core.handler.AbstractIdentityHandler;
+import org.wso2.carbon.identity.idp.metadata.saml2.ConfigElements;
+import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
+import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class defines methods that are used to convert a metadata String using saml2SSOFederatedAuthenticatedConfig
  */
 public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
+    static final long ONE_MINUTE_IN_MILLIS=60000;
+
+    private boolean samlMetadataSigningEnabled;
+
+    private boolean wantAuthRequestSigned;
 
     public String build(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
 
 
         EntityDescriptor entityDescriptor = buildEntityDescriptor(samlFederatedAuthenticatorConfig);
         IDPSSODescriptor idpSsoDesc = buildIDPSSODescriptor();
-        buildValidityPeriod(idpSsoDesc);
+        setValidityPeriod(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildSupportedProtocol(idpSsoDesc);
-
         buildSingleSignOnService(idpSsoDesc, samlFederatedAuthenticatorConfig);
+        String samlSsoURL =  getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL).getValue();
+        for (Property property : samlFederatedAuthenticatorConfig.getProperties()) {
+            if (StringUtils.equals(samlSsoURL, property.getValue())) {
+                continue; // Skip since default SSO URL has been already added
+            }
+            if (StringUtils.startsWith(property.getName(), IdentityApplicationConstants.Authenticator.SAML2SSO.
+                    DESTINATION_URL_PREFIX)) {
+
+                SingleSignOnService ssoHTTPPost = BuilderUtil
+                        .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
+                ssoHTTPPost.setBinding(IDPMetadataConstant.HTTP_BINDING_POST_SAML2);
+                ssoHTTPPost.setLocation(property.getValue());
+                idpSsoDesc.getSingleSignOnServices().add(ssoHTTPPost);
+
+                SingleSignOnService ssoHTTPRedirect = BuilderUtil
+                        .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
+                ssoHTTPRedirect.setBinding(IDPMetadataConstant.HTTP_BINDING_REDIRECT_SAML2);
+                ssoHTTPRedirect.setLocation(property.getValue());
+                idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
+            }
+        }
         buildNameIdFormat(idpSsoDesc);
         buildSingleLogOutService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         entityDescriptor.getRoleDescriptors().add(idpSsoDesc);
         buildKeyDescriptor(entityDescriptor);
         buildExtensions(idpSsoDesc);
+        idpSsoDesc.setWantAuthnRequestsSigned(wantAuthRequestSigned);
+        setSamlMetadataSigningEnabled(samlFederatedAuthenticatorConfig);
 
         return marshallDescriptor(entityDescriptor);
     }
@@ -58,6 +96,18 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
         }
         return null;
     }
+
+    private Property getFederatedAuthenticatorConfigProperty(
+            FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig, String name) {
+
+        for (Property property : samlFederatedAuthenticatorConfig.getProperties()) {
+            if (name.equals(property.getName())) {
+                return property;
+            }
+        }
+        return null;
+    }
+
 
     protected abstract EntityDescriptor buildEntityDescriptor(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException;
 
@@ -79,4 +129,36 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     protected abstract String marshallDescriptor(EntityDescriptor entityDescriptor) throws MetadataException;
 
+    protected void setValidityPeriod(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig
+            samlFederatedAuthenticatorConfig) throws MetadataException {
+
+        try {
+            DateTime currentTime = DateTime.now();
+            int validityPeriod = Integer.parseInt(getFederatedAuthenticatorConfigProperty(
+                    samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.
+                            SAML_METADATA_VALIDITY_PERIOD).getValue());
+            DateTime validUntil = new DateTime(currentTime.getMillis() + validityPeriod * ONE_MINUTE_IN_MILLIS);
+            idpSsoDesc.setValidUntil(validUntil);
+        } catch (Exception e) {
+            throw new MetadataException("Setting validity period failed.", e);
+        }
+    }
+
+    protected void setSamlMetadataSigningEnabled(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) {
+        samlMetadataSigningEnabled = Boolean.parseBoolean(getFederatedAuthenticatorConfigProperty(
+                samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.
+                        SAML_METADATA_SIGNING_ENABLED).getValue());
+    }
+
+    protected boolean getSamlMetadataSigningEnabled() {
+        return samlMetadataSigningEnabled;
+    }
+
+    public boolean isWantAuthRequestSigned() {
+        return wantAuthRequestSigned;
+    }
+
+    public void setWantAuthRequestSigned(boolean wantAuthRequestSigned) {
+        this.wantAuthRequestSigned = wantAuthRequestSigned;
+    }
 }
