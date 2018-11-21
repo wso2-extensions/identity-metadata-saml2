@@ -20,14 +20,18 @@ package org.wso2.carbon.identity.idp.metadata.saml2;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.exceptions.XMLSecurityException;
+import org.opensaml.Configuration;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml2.metadata.RoleDescriptor;
+import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.credential.UsageType;
 import org.opensaml.xml.security.x509.X509Credential;
 import org.opensaml.xml.signature.KeyInfo;
+import org.opensaml.xml.signature.Signature;
+import org.opensaml.xml.signature.SignatureConstants;
 import org.opensaml.xml.signature.X509Certificate;
 import org.opensaml.xml.signature.X509Data;
 import org.w3c.dom.Document;
@@ -35,6 +39,7 @@ import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -162,6 +167,19 @@ public class MetadataCryptoProvider implements CryptoProvider {
         }
         return document;
 
+    }
+
+    @SuppressWarnings ("unchecked")
+    public Signature getSignature(EntityDescriptor baseDescriptor) {
+        QName qname = Signature.DEFAULT_ELEMENT_NAME;
+        XMLObjectBuilder<Signature> builder = (XMLObjectBuilder<Signature>) Configuration.getBuilderFactory().
+                getBuilder(qname);
+        Signature signature = builder.buildObject(qname);
+        signature.setSigningCredential(credential);
+        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
+        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+        baseDescriptor.setSignature(signature);
+        return signature;
     }
 
 }
