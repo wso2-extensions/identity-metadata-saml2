@@ -198,6 +198,14 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
                 getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL)
                         .getValue());
         idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
+
+        SingleSignOnService ssoSOAP = BuilderUtil
+                .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
+        ssoSOAP.setBinding(IDPMetadataConstant.SOAP_SAML2);
+        ssoSOAP.setLocation(
+                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO
+                        .ECP_URL).getValue());
+        idpSsoDesc.getSingleSignOnServices().add(ssoSOAP);
     }
 
     public void buildSingleLogOutService(IDPSSODescriptor idpSsoDesc,
