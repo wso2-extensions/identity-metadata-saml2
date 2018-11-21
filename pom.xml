@@ -231,7 +231,7 @@
     </dependencyManagement>
 
     <properties>
-        <org.wso2.carbon.identity.framework.version>5.7.0</org.wso2.carbon.identity.framework.version>
+        <org.wso2.carbon.identity.framework.version>5.12.201-SNAPSHOT</org.wso2.carbon.identity.framework.version>
         <carbon.identity.package.import.version.range>[5.7.0, 6.0.0)</carbon.identity.package.import.version.range>
 
         <commons.collections.version>3.2.0.wso2v1</commons.collections.version>
