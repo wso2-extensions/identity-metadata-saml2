@@ -17,6 +17,9 @@
  */
 package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
+import org.opensaml.xml.signature.Signature;
+import org.opensaml.xml.signature.SignatureException;
+import org.opensaml.xml.signature.Signer;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.MetadataCryptoProvider;
 import org.apache.commons.logging.Log;
@@ -46,7 +49,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringWriter;
-
 /**
  * This class builds a metadata String using saml2SSOFederatedAuthenticatedConfig
  */
@@ -125,11 +127,22 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
         }
         Document document = builder.newDocument();
         Marshaller out = org.opensaml.xml.Configuration.getMarshallerFactory().getMarshaller(entityDescriptor);
+        CryptoProvider cryptoProvider;
+        Signature signature = null;
+        if (getSamlMetadataSigningEnabled()) {
+            cryptoProvider = new MetadataCryptoProvider();
+            signature = ((MetadataCryptoProvider) cryptoProvider).getSignature(entityDescriptor);
+        }
 
         try {
             out.marshall(entityDescriptor, document);
+            if (signature != null) {
+                Signer.signObject(signature);
+            }
         } catch (MarshallingException e) {
             throw new MetadataException("Error while marshalling the descriptor.", e);
+        } catch (SignatureException e) {
+            throw new MetadataException("Error while signing the descriptor.", e);
         }
 
         if (log.isDebugEnabled()) {
