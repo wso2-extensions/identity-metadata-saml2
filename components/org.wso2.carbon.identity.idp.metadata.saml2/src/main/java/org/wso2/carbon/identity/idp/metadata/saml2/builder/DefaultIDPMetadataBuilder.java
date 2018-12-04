@@ -230,7 +230,6 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
                 IdentityApplicationConstants.Authenticator.SAML2SSO.ARTIFACT_RESOLVE_URL).getValue());
         aresServiceDesc.setIndex(1);
         idpSsoDesc.getArtifactResolutionServices().add(aresServiceDesc);
-
     }
 
     private DateTime validityPeriod(long timePeriod, char unit) {
