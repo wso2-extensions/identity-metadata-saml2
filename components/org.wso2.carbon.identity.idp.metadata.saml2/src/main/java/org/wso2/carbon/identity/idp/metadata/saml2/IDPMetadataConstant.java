@@ -29,5 +29,5 @@ public final class IDPMetadataConstant {
     public static String SUPPORTED_PROTOCOL_SAML2 = "urn:oasis:names:tc:SAML:2.0:protocol";
     public static String IDP_METADATA_SAML2 = "urn:oasis:names:tc:SAML:2.0:metadata";
     public static String SAML = "saml";
-    public static String SOAP_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
+    public static String SOAP_BINDING_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
 }
