@@ -201,7 +201,7 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
 
         SingleSignOnService ssoSOAP = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
-        ssoSOAP.setBinding(IDPMetadataConstant.SOAP_SAML2);
+        ssoSOAP.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
         ssoSOAP.setLocation(
                 getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO
                         .ECP_URL).getValue());
@@ -225,7 +225,7 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
                                                FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
         ArtifactResolutionService aresServiceDesc = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.ARTIFACTRESSERVICE_DESCRIPTOR, "");
-        aresServiceDesc.setBinding(IDPMetadataConstant.SOAP_SAML2);
+        aresServiceDesc.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
         aresServiceDesc.setLocation(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                 IdentityApplicationConstants.Authenticator.SAML2SSO.ARTIFACT_RESOLVE_URL).getValue());
         aresServiceDesc.setIndex(1);
