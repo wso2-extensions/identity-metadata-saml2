@@ -213,7 +213,7 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
 
         SingleLogoutService sloServiceDesc = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SLOSERVICE_DESCRIPTOR, "");
-        sloServiceDesc.setBinding(IDPMetadataConstant.HTTP_BINDING_REDIRECT_SAML2);
+        sloServiceDesc.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
         sloServiceDesc.setLocation(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                 IdentityApplicationConstants.Authenticator.SAML2SSO.LOGOUT_REQ_URL).getValue());
         sloServiceDesc.setResponseLocation(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
