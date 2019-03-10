@@ -144,7 +144,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
             samlFederatedAuthenticatorConfig) throws MetadataException {
 
         try {
-            DateTime currentTime = DateTime.now();
+            DateTime currentTime = new DateTime();
             String validiyPeriodStr = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                     IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_VALIDITY_PERIOD).getValue();
             if (validiyPeriodStr == null) {
