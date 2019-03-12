@@ -199,15 +199,13 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
                         .getValue());
         idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
 
-        if (IDPMetadataConstant.SAML_ECP_ENABLED) {
-            SingleSignOnService ssoSOAP = BuilderUtil
-                    .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
-            ssoSOAP.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
-            ssoSOAP.setLocation(
-                    getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO
-                            .ECP_URL).getValue());
-            idpSsoDesc.getSingleSignOnServices().add(ssoSOAP);
-        }
+        SingleSignOnService ssoSOAP = BuilderUtil
+                .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
+        ssoSOAP.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
+        ssoSOAP.setLocation(
+                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO
+                        .ECP_URL).getValue());
+        idpSsoDesc.getSingleSignOnServices().add(ssoSOAP);
     }
 
     public void buildSingleLogOutService(IDPSSODescriptor idpSsoDesc,

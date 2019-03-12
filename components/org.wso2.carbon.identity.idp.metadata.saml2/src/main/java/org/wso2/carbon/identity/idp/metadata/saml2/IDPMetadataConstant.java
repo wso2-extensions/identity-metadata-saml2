@@ -30,6 +30,4 @@ public final class IDPMetadataConstant {
     public static String IDP_METADATA_SAML2 = "urn:oasis:names:tc:SAML:2.0:metadata";
     public static String SAML = "saml";
     public static String SOAP_BINDING_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
-
-    public static final boolean SAML_ECP_ENABLED = false;
 }
