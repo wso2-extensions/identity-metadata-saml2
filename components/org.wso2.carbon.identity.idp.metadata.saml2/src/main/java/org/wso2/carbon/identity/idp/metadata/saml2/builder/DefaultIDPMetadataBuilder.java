@@ -210,9 +210,20 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
     public void buildSingleLogOutService(IDPSSODescriptor idpSsoDesc,
                                          FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
 
+        addSingleLogoutService(idpSsoDesc, samlFederatedAuthenticatorConfig, IDPMetadataConstant.SOAP_BINDING_SAML2);
+        addSingleLogoutService(idpSsoDesc, samlFederatedAuthenticatorConfig,
+                IDPMetadataConstant.HTTP_BINDING_POST_SAML2);
+        addSingleLogoutService(idpSsoDesc, samlFederatedAuthenticatorConfig,
+                IDPMetadataConstant.HTTP_BINDING_REDIRECT_SAML2);
+    }
+
+    private void addSingleLogoutService(IDPSSODescriptor idpSsoDesc,
+                                        FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig, String binding)
+            throws MetadataException {
+
         SingleLogoutService sloServiceDesc = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SLOSERVICE_DESCRIPTOR, "");
-        sloServiceDesc.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
+        sloServiceDesc.setBinding(binding);
         sloServiceDesc.setLocation(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                 IdentityApplicationConstants.Authenticator.SAML2SSO.LOGOUT_REQ_URL).getValue());
         sloServiceDesc.setResponseLocation(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
