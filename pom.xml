@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>1</version>
+        <version>1.2</version>
     </parent>
 
     <scm>
@@ -232,8 +232,8 @@
     </dependencyManagement>
 
     <properties>
-        <org.wso2.carbon.identity.framework.version>5.13.4</org.wso2.carbon.identity.framework.version>
-        <carbon.identity.package.import.version.range>[5.13.0, 6.0.0)</carbon.identity.package.import.version.range>
+        <org.wso2.carbon.identity.framework.version>5.14.0</org.wso2.carbon.identity.framework.version>
+        <carbon.identity.package.import.version.range>[5.14.0, 6.0.0)</carbon.identity.package.import.version.range>
 
         <commons.collections.version>3.2.0.wso2v1</commons.collections.version>
         <httpcomponents-httpclient.wso2.version>4.3.1.wso2v2</httpcomponents-httpclient.wso2.version>
@@ -253,14 +253,14 @@
         <carbon.base.imp.pkg.version.range>[1.0.0, 2.0.0)</carbon.base.imp.pkg.version.range>
         <carbon.kernel.package.import.version.range>[4.5.0, 5.0.0)</carbon.kernel.package.import.version.range>
         <carbon.kernel.registry.imp.pkg.version>[1.0.1, 2.0.0)</carbon.kernel.registry.imp.pkg.version>
-        <carbon.kernel.version>4.5.0-m1</carbon.kernel.version>
+        <carbon.kernel.version>4.5.0-m3</carbon.kernel.version>
         <javax.xml.range>[0.0.0,1.0.0)</javax.xml.range>
         <org.apache.xml.security.range>[0.0.0,2.0.0)</org.apache.xml.security.range>
         <javax.crypto.range>[0.0.0,1.0.0)</javax.crypto.range>
         <org.opensaml.version>2.6.4.wso2v5</org.opensaml.version>
         <org.wso2.dom.version.range>[0.0.0,1.0.0)</org.wso2.dom.version.range>
         <org.xml.sax.range>[0.0.0,1.0.0)</org.xml.sax.range>
-        <carbon.commons.version>4.7.0</carbon.commons.version>
+        <carbon.commons.version>4.8.0</carbon.commons.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <!-- Pax Logging Version -->
         <pax.logging.api.version>1.10.1</pax.logging.api.version>
@@ -297,6 +297,25 @@
                         <doCheck>false</doCheck>
                         <doUpdate>false</doUpdate>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <!--This parameter disables doclint-->
+                                <doclint>none</doclint>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
