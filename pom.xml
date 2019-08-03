@@ -260,7 +260,7 @@
         <org.opensaml.version>2.6.4.wso2v5</org.opensaml.version>
         <org.wso2.dom.version.range>[0.0.0,1.0.0)</org.wso2.dom.version.range>
         <org.xml.sax.range>[0.0.0,1.0.0)</org.xml.sax.range>
-        <carbon.commons.version>4.8.0</carbon.commons.version>
+        <carbon.commons.version>4.7.2</carbon.commons.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
         <!-- Pax Logging Version -->
         <pax.logging.api.version>1.10.1</pax.logging.api.version>
