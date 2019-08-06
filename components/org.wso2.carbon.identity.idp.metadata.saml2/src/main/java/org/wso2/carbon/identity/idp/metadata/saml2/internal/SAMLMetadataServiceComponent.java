@@ -15,7 +15,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.wso2.carbon.identity.idp.metadata.saml2.internal;
 
 import org.apache.commons.logging.Log;
@@ -32,51 +31,44 @@ import org.wso2.carbon.identity.idp.metadata.saml2.util.SAMLMetadataConverter;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
-/**
- * @scr.component name="identity.provider.saml.service.component" immediate="true"
- * @scr.reference name="registry.service"
- * interface="org.wso2.carbon.registry.core.service.RegistryService"
- * cardinality="1..1" policy="dynamic" bind="setRegistryService"
- * unbind="unsetRegistryService"
- * @scr.reference name="user.realmservice.default" interface="org.wso2.carbon.user.core.service.RealmService"
- * cardinality="1..1" policy="dynamic" bind="setRealmService"
- * unbind="unsetRealmService"
- * @scr.reference name="config.context.service"
- * interface="org.wso2.carbon.utils.ConfigurationContextService" cardinality="1..1"
- * policy="dynamic" bind="setConfigurationContextService"
- * unbind="unsetConfigurationContextService"
- * @scr.reference name="osgi.httpservice" interface="org.osgi.service.http.HttpService"
- * cardinality="1..1" policy="dynamic" bind="setHttpService"
- * unbind="unsetHttpService"
- * @scr.reference name="IdentityProviderManager"
- * interface="org.wso2.carbon.idp.mgt.IdpManager" cardinality="1..1"
- * policy="dynamic" bind="setIdpManager" unbind="unsetIdpManager"
- */
-
+@Component(
+         name = "identity.provider.saml.service.component", 
+         immediate = true)
 public class SAMLMetadataServiceComponent {
 
     private static Log log = LogFactory.getLog(SAMLMetadataServiceComponent.class);
 
-
+    @Activate
     protected void activate(ComponentContext context) {
-
         MetadataConverter converter = new SAMLMetadataConverter();
         context.getBundleContext().registerService(MetadataConverter.class.getName(), converter, null);
         context.getBundleContext().registerService(IdentityProcessor.class.getName(), new IDPMetadataPublishProcessor(), null);
-        context.getBundleContext().registerService(HttpIdentityResponseFactory.class.getName(), new
-                HttpSAMLMetadataResponseFactory(), null);
+        context.getBundleContext().registerService(HttpIdentityResponseFactory.class.getName(), new HttpSAMLMetadataResponseFactory(), null);
         if (log.isDebugEnabled()) {
             log.debug("SAML metadata converter is enabled");
         }
     }
 
+    @Deactivate
     protected void deactivate(ComponentContext context) {
         if (log.isDebugEnabled()) {
             log.debug("Identity Management bundle is de-activated");
         }
     }
 
+    @Reference(
+             name = "user.realmservice.default", 
+             service = org.wso2.carbon.user.core.service.RealmService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
         if (log.isDebugEnabled()) {
             log.debug("RealmService is set in IDP Metadata bundle");
@@ -91,11 +83,15 @@ public class SAMLMetadataServiceComponent {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setRealmService(null);
     }
 
-
+    @Reference(
+             name = "registry.service", 
+             service = org.wso2.carbon.registry.core.service.RegistryService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetRegistryService")
     public static void setRegistryService(RegistryService registryService) {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setRegistryService(registryService);
     }
-
 
     protected void unsetRegistryService(RegistryService registryService) {
         if (log.isDebugEnabled()) {
@@ -104,6 +100,12 @@ public class SAMLMetadataServiceComponent {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setRegistryService(null);
     }
 
+    @Reference(
+             name = "config.context.service", 
+             service = org.wso2.carbon.utils.ConfigurationContextService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetConfigurationContextService")
     protected void setConfigurationContextService(ConfigurationContextService configCtxService) {
         if (log.isDebugEnabled()) {
             log.debug("Configuration Context Service is set in the SAML SSO bundle");
@@ -118,6 +120,12 @@ public class SAMLMetadataServiceComponent {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setConfigCtxService(null);
     }
 
+    @Reference(
+             name = "osgi.httpservice", 
+             service = org.osgi.service.http.HttpService.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetHttpService")
     protected void setHttpService(HttpService httpService) {
         if (log.isDebugEnabled()) {
             log.debug("HTTP Service is set in the SAML SSO bundle");
@@ -136,9 +144,14 @@ public class SAMLMetadataServiceComponent {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setIdpManager(null);
     }
 
+    @Reference(
+             name = "IdentityProviderManager", 
+             service = org.wso2.carbon.idp.mgt.IdpManager.class, 
+             cardinality = ReferenceCardinality.MANDATORY, 
+             policy = ReferencePolicy.DYNAMIC, 
+             unbind = "unsetIdpManager")
     protected void setIdpManager(IdpManager idpManager) {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setIdpManager(idpManager);
     }
-
-
 }
+
