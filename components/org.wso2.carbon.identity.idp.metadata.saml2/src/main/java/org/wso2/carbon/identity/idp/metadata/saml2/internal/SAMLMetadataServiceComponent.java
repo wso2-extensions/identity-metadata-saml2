@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(
-         name = "identity.provider.saml.service.component", 
+         name = "identity.provider.saml.service.component",
          immediate = true)
 public class SAMLMetadataServiceComponent {
 
@@ -64,10 +64,10 @@ public class SAMLMetadataServiceComponent {
     }
 
     @Reference(
-             name = "user.realmservice.default", 
-             service = org.wso2.carbon.user.core.service.RealmService.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
+             name = "user.realmservice.default",
+             service = org.wso2.carbon.user.core.service.RealmService.class,
+             cardinality = ReferenceCardinality.MANDATORY,
+             policy = ReferencePolicy.DYNAMIC,
              unbind = "unsetRealmService")
     protected void setRealmService(RealmService realmService) {
         if (log.isDebugEnabled()) {
@@ -89,7 +89,7 @@ public class SAMLMetadataServiceComponent {
              cardinality = ReferenceCardinality.MANDATORY, 
              policy = ReferencePolicy.DYNAMIC, 
              unbind = "unsetRegistryService")
-    public static void setRegistryService(RegistryService registryService) {
+    protected void setRegistryService(RegistryService registryService) {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setRegistryService(registryService);
     }
 
@@ -101,10 +101,10 @@ public class SAMLMetadataServiceComponent {
     }
 
     @Reference(
-             name = "config.context.service", 
-             service = org.wso2.carbon.utils.ConfigurationContextService.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
+             name = "config.context.service",
+             service = org.wso2.carbon.utils.ConfigurationContextService.class,
+             cardinality = ReferenceCardinality.MANDATORY,
+             policy = ReferencePolicy.DYNAMIC,
              unbind = "unsetConfigurationContextService")
     protected void setConfigurationContextService(ConfigurationContextService configCtxService) {
         if (log.isDebugEnabled()) {
@@ -121,10 +121,10 @@ public class SAMLMetadataServiceComponent {
     }
 
     @Reference(
-             name = "osgi.httpservice", 
-             service = org.osgi.service.http.HttpService.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
+             name = "osgi.httpservice",
+             service = org.osgi.service.http.HttpService.class,
+             cardinality = ReferenceCardinality.MANDATORY,
+             policy = ReferencePolicy.DYNAMIC,
              unbind = "unsetHttpService")
     protected void setHttpService(HttpService httpService) {
         if (log.isDebugEnabled()) {
@@ -145,10 +145,10 @@ public class SAMLMetadataServiceComponent {
     }
 
     @Reference(
-             name = "IdentityProviderManager", 
-             service = org.wso2.carbon.idp.mgt.IdpManager.class, 
-             cardinality = ReferenceCardinality.MANDATORY, 
-             policy = ReferencePolicy.DYNAMIC, 
+             name = "IdentityProviderManager",
+             service = org.wso2.carbon.idp.mgt.IdpManager.class,
+             cardinality = ReferenceCardinality.MANDATORY,
+             policy = ReferencePolicy.DYNAMIC,
              unbind = "unsetIdpManager")
     protected void setIdpManager(IdpManager idpManager) {
         IDPMetadataSAMLServiceComponentHolder.getInstance().setIdpManager(idpManager);
