@@ -20,9 +20,16 @@ package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml2.metadata.SingleSignOnService;
+
+//import org.opensaml.saml2.metadata.EntityDescriptor; Previous Version (New Version Below)
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+
+//import org.opensaml.saml2.metadata.IDPSSODescriptor; Previous Version (New Version Below)
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+
+//import org.opensaml.saml2.metadata.SingleSignOnService; Previous Version (New Version Below)
+import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.application.common.model.Property;

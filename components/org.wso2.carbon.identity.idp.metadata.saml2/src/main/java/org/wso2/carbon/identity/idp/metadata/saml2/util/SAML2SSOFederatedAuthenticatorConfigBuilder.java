@@ -2,25 +2,26 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.collections.CollectionUtils;
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.metadata.*;
-import org.opensaml.saml2.metadata.provider.DOMMetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.parse.BasicParserPool;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
+//import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml.common.xml.SAMLConstants;
+
+//import org.opensaml.saml2.metadata.*;
+import org.opensaml.saml.saml2.metadata.*;
+
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
+
 import org.wso2.carbon.identity.application.common.IdentityApplicationManagementException;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
-import org.wso2.carbon.identity.core.util.IdentityUtil;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,20 +41,34 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
      * @return EntityDescriptor
      */
     private static EntityDescriptor generateMetadataObjectFromString(String metadataString) throws IdentityApplicationManagementException {
-        EntityDescriptor entityDescriptor = null;
+        EntityDescriptor entityDescriptor;
+        InputStream inputStream;
         try {
-            DocumentBuilderFactory factory = IdentityUtil.getSecuredDocumentBuilderFactory();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new ByteArrayInputStream(metadataString.getBytes()));
-            Element node = document.getDocumentElement();
-            DOMMetadataProvider idpMetaDataProvider = new DOMMetadataProvider(node);
-            idpMetaDataProvider.setRequireValidMetadata(true);
-            idpMetaDataProvider.setParserPool(new BasicParserPool());
-            idpMetaDataProvider.initialize();
-            XMLObject xmlObject = idpMetaDataProvider.getMetadata();
-            entityDescriptor = (EntityDescriptor) xmlObject;
-        } catch (MetadataProviderException | SAXException | ParserConfigurationException | IOException e) {
-            throw new IdentityApplicationManagementException("Error while converting file content to entity descriptor", e);
+
+            BuilderUtil.doBootstrap();
+
+//            DocumentBuilderFactory factory = IdentityUtil.getSecuredDocumentBuilderFactory();
+//            DocumentBuilder builder = factory.newDocumentBuilder();
+//            Document document = builder.parse(new ByteArrayInputStream(metadataString.getBytes()));
+//            Element node = document.getDocumentElement();
+//            DOMMetadataResolver idpMetaDataProvider = new DOMMetadataResolver(node);
+//            idpMetaDataProvider.setRequireValidMetadata(true);
+//            idpMetaDataProvider.setParserPool(new BasicParserPool());
+//            idpMetaDataProvider.initialize();
+//            SAML2
+//            XMLObject xmlObject = idpMetaDataProvider.getMetadata();
+//            entityDescriptor = (EntityDescriptor) xmlObject;
+//            SAML3
+//            idpMetaDataProvider.setId("unique_identification");
+//            CriteriaSet criteriaSet = new CriteriaSet();
+//            criteriaSet.add(new EntityIdCriterion("unique_identification"));
+//            entityDescriptor = idpMetaDataProvider.resolveSingle(criteriaSet);
+
+            inputStream = new ByteArrayInputStream(metadataString.trim().getBytes(StandardCharsets.UTF_8));
+            entityDescriptor = (EntityDescriptor) XMLObjectSupport.unmarshallFromInputStream(
+                    XMLObjectProviderRegistrySupport.getParserPool(), inputStream);
+        } catch (UnmarshallingException | XMLParserException e) {
+            throw new IdentityApplicationManagementException("Error while converting file content to entity descriptor");
         }
         return entityDescriptor;
     }

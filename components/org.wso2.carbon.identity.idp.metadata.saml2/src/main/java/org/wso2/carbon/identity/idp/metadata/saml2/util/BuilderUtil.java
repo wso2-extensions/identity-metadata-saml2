@@ -20,9 +20,18 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.XMLObjectBuilderFactory;
+
+//import org.opensaml.DefaultBootstrap;
+import org.opensaml.core.config.InitializationService;
+
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+
+//import org.opensaml.xml.ConfigurationException;
+import org.opensaml.core.config.InitializationException;
+
+//import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+
 import org.wso2.carbon.idp.mgt.MetadataException;
 import javax.xml.namespace.QName;
 
@@ -37,11 +46,30 @@ public class BuilderUtil {
 
     public static void doBootstrap() {
         if (!isBootStrapped) {
+
+            Thread thread = Thread.currentThread();
+            ClassLoader loader = thread.getContextClassLoader();
+            thread.setContextClassLoader(InitializationService.class.getClassLoader());
+
             try {
-                DefaultBootstrap.bootstrap();
+                InitializationService.initialize();
+
+                org.opensaml.saml.config.SAMLConfigurationInitializer initializer_1 = new org.opensaml.saml.config.SAMLConfigurationInitializer();
+                initializer_1.init();
+
+                org.opensaml.saml.config.XMLObjectProviderInitializer initializer_2 = new org.opensaml.saml.config.XMLObjectProviderInitializer();
+                initializer_2.init();
+
+                org.opensaml.core.xml.config.XMLObjectProviderInitializer initializer_3 = new org.opensaml.core.xml.config.XMLObjectProviderInitializer();
+                initializer_3.init();
+
+                org.opensaml.core.xml.config.GlobalParserPoolInitializer initializer_4 = new org.opensaml.core.xml.config.GlobalParserPoolInitializer();
+                initializer_4.init();
                 isBootStrapped = true;
-            } catch (ConfigurationException e) {
+            } catch (InitializationException e) {
                 log.error("Error in bootstrapping the OpenSAML2 library", e);
+            } finally {
+                thread.setContextClassLoader(loader);
             }
 
         }
@@ -50,7 +78,7 @@ public class BuilderUtil {
     public static <T> T createSAMLObject(String namespaceURI, String localName, String namespacePrefix)
             throws MetadataException {
 
-        XMLObjectBuilderFactory builderFactory = org.opensaml.xml.Configuration.getBuilderFactory();
+        XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         if (log.isDebugEnabled()) {
             log.debug("Building the SAML Object with namespaceURI: " + namespaceURI + " prefix:" + namespacePrefix);

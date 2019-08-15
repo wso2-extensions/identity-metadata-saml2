@@ -257,7 +257,8 @@
         <javax.xml.range>[0.0.0,1.0.0)</javax.xml.range>
         <org.apache.xml.security.range>[0.0.0,2.0.0)</org.apache.xml.security.range>
         <javax.crypto.range>[0.0.0,1.0.0)</javax.crypto.range>
-        <org.opensaml.version>2.6.4.wso2v5</org.opensaml.version>
+        <!--<org.opensaml.version>2.6.4.wso2v5</org.opensaml.version>-->
+        <org.opensaml.version>3.2.0.wso2v1</org.opensaml.version>
         <org.wso2.dom.version.range>[0.0.0,1.0.0)</org.wso2.dom.version.range>
         <org.xml.sax.range>[0.0.0,1.0.0)</org.xml.sax.range>
         <carbon.commons.version>4.7.11</carbon.commons.version>
