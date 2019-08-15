@@ -53,7 +53,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
 
     private X509Credential credential;
 
-    private static Log log = LogFactory.getLog(MetadataCryptoProvider.class);
+    private static final Log log = LogFactory.getLog(MetadataCryptoProvider.class);
 
     public MetadataCryptoProvider() throws MetadataException {
         if (log.isDebugEnabled()) {

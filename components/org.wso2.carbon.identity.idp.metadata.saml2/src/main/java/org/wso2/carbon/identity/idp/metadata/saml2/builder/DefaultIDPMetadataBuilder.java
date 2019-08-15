@@ -56,7 +56,7 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
 
     private final static int PRIORITY = 50;
 
-    private static Log log = LogFactory.getLog(DefaultIDPMetadataBuilder.class);
+    private static final Log log = LogFactory.getLog(DefaultIDPMetadataBuilder.class);
 
     @Override
     public int getPriority() {

@@ -51,7 +51,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class Parser {
 
-    private static Log log = LogFactory.getLog(Parser.class);
+    private static final Log log = LogFactory.getLog(Parser.class);
 
     protected Registry registry = null;
     private final String DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";

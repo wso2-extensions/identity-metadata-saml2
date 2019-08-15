@@ -37,7 +37,7 @@ import org.wso2.carbon.idp.mgt.IdentityProviderManager;
  */
 
 public class IDPMetadataPublishProcessor extends IdentityProcessor {
-    private static Log log = LogFactory.getLog(IDPMetadataPublishProcessor.class);
+    private static final Log log = LogFactory.getLog(IDPMetadataPublishProcessor.class);
     private String relyingParty;
 
     @Override

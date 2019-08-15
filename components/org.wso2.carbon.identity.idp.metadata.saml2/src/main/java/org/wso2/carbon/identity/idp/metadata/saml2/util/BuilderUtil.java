@@ -33,7 +33,7 @@ import javax.xml.namespace.QName;
 public class BuilderUtil {
 
     private static boolean isBootStrapped = false;
-    private static Log log = LogFactory.getLog(BuilderUtil.class);
+    private static final Log log = LogFactory.getLog(BuilderUtil.class);
 
     public static void doBootstrap() {
         if (!isBootStrapped) {

@@ -56,7 +56,7 @@ import org.wso2.carbon.utils.ConfigurationContextService;
 
 public class SAMLMetadataServiceComponent {
 
-    private static Log log = LogFactory.getLog(SAMLMetadataServiceComponent.class);
+    private static final Log log = LogFactory.getLog(SAMLMetadataServiceComponent.class);
 
 
     protected void activate(ComponentContext context) {

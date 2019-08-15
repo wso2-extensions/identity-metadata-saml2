@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * This class provides functionality to convert metadata String to federatedAuthenticatedConfig
  */
 public class SAML2SSOFederatedAuthenticatorConfigBuilder {
-    private static Log log = LogFactory.getLog(SAML2SSOFederatedAuthenticatorConfigBuilder.class);
+    private static final Log log = LogFactory.getLog(SAML2SSOFederatedAuthenticatorConfigBuilder.class);
     private static final String SIGNING = "SIGNING";
     private static final String ENCRYPTION = "ENCRYPTION";
 
