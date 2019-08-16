@@ -71,7 +71,7 @@ public class SignKeyDataHolder implements X509Credential {
     private PrivateKey issuerPrivateKey = null;
     private static KeyStore superTenantSignKeyStore = null;
 
-    private static Log log = LogFactory.getLog(SignKeyDataHolder.class);
+    private static final Log log = LogFactory.getLog(SignKeyDataHolder.class);
 
     /**
      * Represent OpenSAML compatible certificate credential

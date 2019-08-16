@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HttpSAMLMetadataResponseFactory extends HttpIdentityResponseFactory {
 
-    private static Log log = LogFactory.getLog(HttpSAMLMetadataResponseFactory.class);
+    private static final Log log = LogFactory.getLog(HttpSAMLMetadataResponseFactory.class);
 
     @Override
     public String getName() {

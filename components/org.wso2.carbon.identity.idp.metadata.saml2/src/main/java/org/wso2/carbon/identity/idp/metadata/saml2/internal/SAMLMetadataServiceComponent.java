@@ -43,7 +43,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
          immediate = true)
 public class SAMLMetadataServiceComponent {
 
-    private static Log log = LogFactory.getLog(SAMLMetadataServiceComponent.class);
+    private static final Log log = LogFactory.getLog(SAMLMetadataServiceComponent.class);
 
     @Activate
     protected void activate(ComponentContext context) {
