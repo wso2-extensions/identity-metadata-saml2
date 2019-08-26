@@ -115,35 +115,28 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Import-Package>
-                            javax.xml.parsers; version="[0.0.0,1.0.0)",
-                            org.apache.commons.collections,
-                            org.apache.commons.lang,
+                            org.osgi.framework; version="${osgi.framework.imp.pkg.version.range}",
+                            org.osgi.service.component; version="${osgi.service.component.imp.pkg.version.range}",
                             org.apache.commons.logging; version="${commons-logging.osgi.version.range}",
                             org.opensaml.saml.common.xml,
                             org.opensaml.saml.saml2.metadata,
-                            org.opensaml.saml.metadata.resolver.impl,
-                            net.shibboleth.utilities.java.support.component,
                             org.opensaml.core.xml,
                             net.shibboleth.utilities.java.support.xml,
-                            <!--org.opensaml.xml.security.credential,-->
                             org.opensaml.xmlsec.keyinfo,
-                            <!--org.opensaml.xml.signature,-->
                             org.opensaml.core.xml.config,
                             org.opensaml.core.xml.io,
                             org.opensaml.core.xml.util,
                             org.opensaml.core.config,
-                            net.shibboleth.utilities.java.support.xml,
-                            org.w3c.dom,
-                            org.wso2.carbon.identity.base,
-                            org.wso2.carbon.identity.core.util,
+                            org.opensaml.saml.config,
+                            org.opensaml.security.credential,
+                            org.opensaml.xmlsec.signature,
                             org.wso2.carbon.identity.core.model,
                             org.wso2.carbon.registry.core,
-                            org.xml.sax
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.identity.sp.metadata.saml2.*;
-                            version="${project.version}",
+                            org.wso2.carbon.identity.sp.metadata.saml2.*; version="${project.version}",
                         </Export-Package>
+                        <!--<DynamicImport-Package>*</DynamicImport-Package>-->
                     </instructions>
                 </configuration>
             </plugin>
