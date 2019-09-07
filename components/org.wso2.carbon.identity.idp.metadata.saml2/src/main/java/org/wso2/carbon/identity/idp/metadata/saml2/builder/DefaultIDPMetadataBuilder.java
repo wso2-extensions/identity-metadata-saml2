@@ -17,15 +17,12 @@
  */
 package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
-//import org.opensaml.xml.signature.Signature;
 import org.opensaml.xmlsec.signature.Signature;
-
-//import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xmlsec.signature.support.SignatureException;
-
-//import org.opensaml.xml.signature.Signer;
 import org.opensaml.xmlsec.signature.support.Signer;
-
+import org.opensaml.saml.saml2.metadata.*;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
@@ -33,15 +30,6 @@ import org.wso2.carbon.identity.idp.metadata.saml2.MetadataCryptoProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-
-//import org.opensaml.saml2.metadata.*;
-import org.opensaml.saml.saml2.metadata.*;
-
-//import org.opensaml.xml.io.Marshaller;
-import org.opensaml.core.xml.io.Marshaller;
-
-//import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.core.xml.io.MarshallingException;
 
 import org.w3c.dom.Document;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;

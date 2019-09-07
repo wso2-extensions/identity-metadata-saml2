@@ -20,16 +20,9 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-//import org.opensaml.DefaultBootstrap;
 import org.opensaml.core.config.InitializationService;
-
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-
-//import org.opensaml.xml.ConfigurationException;
 import org.opensaml.core.config.InitializationException;
-
-//import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 
 import org.wso2.carbon.idp.mgt.MetadataException;
@@ -67,7 +60,7 @@ public class BuilderUtil {
                 initializer_4.init();
                 isBootStrapped = true;
             } catch (InitializationException e) {
-                log.error("Error in bootstrapping the OpenSAML2 library", e);
+                log.error("Error in bootstrapping the OpenSAML3 library", e);
             } finally {
                 thread.setContextClassLoader(loader);
             }

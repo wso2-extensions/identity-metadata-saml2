@@ -20,34 +20,15 @@ package org.wso2.carbon.identity.sp.metadata.saml2.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-//import org.opensaml.common.xml.SAMLConstants; Previous Version (New Version Below)
 import org.opensaml.saml.common.xml.SAMLConstants;
-
-//import org.opensaml.saml2.metadata.AssertionConsumerService; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
-
-//import org.opensaml.saml2.metadata.AttributeConsumingService; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
-
-//import org.opensaml.saml2.metadata.EntityDescriptor; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-
-//import org.opensaml.saml2.metadata.KeyDescriptor; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
-
-//import org.opensaml.saml2.metadata.NameIDFormat; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.NameIDFormat;
-
-//import org.opensaml.saml2.metadata.RequestedAttribute; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
-
-//import org.opensaml.saml2.metadata.RoleDescriptor; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-
-//import org.opensaml.saml2.metadata.SPSSODescriptor; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
-//import org.opensaml.saml2.metadata.SingleLogoutService; Previous Version (New Version Below)
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -321,7 +302,7 @@ public class Parser {
                 initializer_4.init();
                 isBootStrapped = true;
             } catch (InitializationException e) {
-                log.error("Error in bootstrapping the OpenSAML2 library", e);
+                log.error("Error in bootstrapping the OpenSAML3 library", e);
             } finally {
                 thread.setContextClassLoader(loader);
             }

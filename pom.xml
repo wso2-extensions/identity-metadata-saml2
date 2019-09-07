@@ -232,8 +232,9 @@
     </dependencyManagement>
 
     <properties>
-        <org.wso2.carbon.identity.framework.version>5.14.67</org.wso2.carbon.identity.framework.version>
-        <carbon.identity.package.import.version.range>[5.14.67, 6.0.0)</carbon.identity.package.import.version.range>
+        <!--<org.wso2.carbon.identity.framework.version>5.14.0</org.wso2.carbon.identity.framework.version>-->
+        <org.wso2.carbon.identity.framework.version>5.14.34-SNAPSHOT</org.wso2.carbon.identity.framework.version>
+        <carbon.identity.package.import.version.range>[5.14.0, 6.0.0)</carbon.identity.package.import.version.range>
 
         <commons.collections.version>3.2.0.wso2v1</commons.collections.version>
         <httpcomponents-httpclient.wso2.version>4.3.1.wso2v2</httpcomponents-httpclient.wso2.version>
@@ -258,7 +259,7 @@
         <org.apache.xml.security.range>[0.0.0,2.0.0)</org.apache.xml.security.range>
         <javax.crypto.range>[0.0.0,1.0.0)</javax.crypto.range>
         <!--<org.opensaml.version>2.6.4.wso2v5</org.opensaml.version>-->
-        <org.opensaml.version>3.2.0.wso2v1</org.opensaml.version>
+        <org.opensaml.version>3.3.1.wso2v1</org.opensaml.version>
         <org.wso2.dom.version.range>[0.0.0,1.0.0)</org.wso2.dom.version.range>
         <org.xml.sax.range>[0.0.0,1.0.0)</org.xml.sax.range>
         <carbon.commons.version>4.7.11</carbon.commons.version>

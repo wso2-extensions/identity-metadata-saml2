@@ -3,12 +3,8 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.collections.CollectionUtils;
 
-//import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml.common.xml.SAMLConstants;
-
-//import org.opensaml.saml2.metadata.*;
 import org.opensaml.saml.saml2.metadata.*;
-
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
