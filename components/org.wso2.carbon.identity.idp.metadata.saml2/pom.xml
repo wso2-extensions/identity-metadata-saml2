@@ -136,6 +136,7 @@
                             org.opensaml.security.x509; version="${org.opensaml.version}",
                             org.opensaml.xmlsec.signature; version="${org.opensaml.version}",
                             org.opensaml.xmlsec.signature.support; version="${org.opensaml.version}",
+                            org.opensaml.xmlsec.config; version="${org.opensaml.version}",
                             org.opensaml.core.xml.config; version="${org.opensaml.version}",
                             org.opensaml.core.xml.util; version="${org.opensaml.version}",
                             org.opensaml.core.config; version="${org.opensaml.version}",
