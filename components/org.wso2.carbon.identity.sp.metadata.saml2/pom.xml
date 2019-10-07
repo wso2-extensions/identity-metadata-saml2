@@ -137,7 +137,6 @@
                         <Export-Package>
                             org.wso2.carbon.identity.sp.metadata.saml2.*; version="${project.version}",
                         </Export-Package>
-                        <!--<DynamicImport-Package>*</DynamicImport-Package>-->
                     </instructions>
                 </configuration>
             </plugin>

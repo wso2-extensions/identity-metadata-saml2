@@ -40,26 +40,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
         EntityDescriptor entityDescriptor;
         InputStream inputStream;
         try {
-
             BuilderUtil.doBootstrap();
-
-//            DocumentBuilderFactory factory = IdentityUtil.getSecuredDocumentBuilderFactory();
-//            DocumentBuilder builder = factory.newDocumentBuilder();
-//            Document document = builder.parse(new ByteArrayInputStream(metadataString.getBytes()));
-//            Element node = document.getDocumentElement();
-//            DOMMetadataResolver idpMetaDataProvider = new DOMMetadataResolver(node);
-//            idpMetaDataProvider.setRequireValidMetadata(true);
-//            idpMetaDataProvider.setParserPool(new BasicParserPool());
-//            idpMetaDataProvider.initialize();
-//            SAML2
-//            XMLObject xmlObject = idpMetaDataProvider.getMetadata();
-//            entityDescriptor = (EntityDescriptor) xmlObject;
-//            SAML3
-//            idpMetaDataProvider.setId("unique_identification");
-//            CriteriaSet criteriaSet = new CriteriaSet();
-//            criteriaSet.add(new EntityIdCriterion("unique_identification"));
-//            entityDescriptor = idpMetaDataProvider.resolveSingle(criteriaSet);
-
             inputStream = new ByteArrayInputStream(metadataString.trim().getBytes(StandardCharsets.UTF_8));
             entityDescriptor = (EntityDescriptor) XMLObjectSupport.unmarshallFromInputStream(
                     XMLObjectProviderRegistrySupport.getParserPool(), inputStream);
