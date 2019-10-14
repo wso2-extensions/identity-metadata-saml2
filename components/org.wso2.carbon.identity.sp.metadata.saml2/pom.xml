@@ -132,6 +132,7 @@
                             org.opensaml.xmlsec.signature,
                             org.opensaml.xmlsec.config,
                             org.wso2.carbon.identity.core.model,
+                            org.wso2.carbon.identity.core.util,
                             org.wso2.carbon.registry.core,
                         </Import-Package>
                         <Export-Package>
