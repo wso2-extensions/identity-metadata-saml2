@@ -269,7 +269,11 @@ public class SignKeyDataHolder implements X509Credential {
         return Arrays.asList(issuerCerts);
     }
 
-    public CredentialContextSet getCredentalContextSet() {
+    /***
+     * get a credential context set
+     * @return Method not supported so will return null
+     */
+    public CredentialContextSet getCredentialContextSet() {
         return null;
     }
 
@@ -294,11 +298,6 @@ public class SignKeyDataHolder implements X509Credential {
     }
 
     public SecretKey getSecretKey() {
-        return null;
-    }
-
-    @Override
-    public CredentialContextSet getCredentialContextSet() {
         return null;
     }
 
