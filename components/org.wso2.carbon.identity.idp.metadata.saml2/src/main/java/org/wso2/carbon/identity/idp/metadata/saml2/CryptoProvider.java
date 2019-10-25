@@ -19,7 +19,6 @@
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-
 import org.wso2.carbon.idp.mgt.MetadataException;
 
 public interface CryptoProvider {

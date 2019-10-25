@@ -23,12 +23,10 @@ import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServi
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.signature.XMLSignature;
-
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.CredentialContextSet;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.x509.X509Credential;
-
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.util.KeyStoreManager;
@@ -270,8 +268,8 @@ public class SignKeyDataHolder implements X509Credential {
     }
 
     /***
-     * get a credential context set
-     * @return This method is not supported so, the return is null
+     * Get the credential context set.
+     * @return This method is not supported so, the return is null.
      */
     public CredentialContextSet getCredentialContextSet() {
         return null;

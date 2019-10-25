@@ -29,13 +29,11 @@ import org.opensaml.saml.saml2.metadata.ArtifactResolutionService;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.MetadataCryptoProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-
 import org.w3c.dom.Document;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
