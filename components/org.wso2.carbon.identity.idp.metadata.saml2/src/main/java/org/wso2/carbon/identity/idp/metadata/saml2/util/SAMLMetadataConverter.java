@@ -113,7 +113,7 @@ public class SAMLMetadataConverter implements MetadataConverter {
         try {
             federatedAuthenticatorConfigMetadata = SAML2SSOFederatedAuthenticatorConfigBuilder.build(element, builder);
         } catch (IdentityApplicationManagementException ex) {
-            throw new IdentityProviderManagementException("Invalid file content");
+            throw new IdentityProviderManagementException("Invalid file content", ex);
         }
 
         return federatedAuthenticatorConfigMetadata;
