@@ -107,7 +107,7 @@ public class SAMLMetadataConverter implements MetadataConverter {
         try {
             element = AXIOMUtil.stringToOM(metadata);
         } catch (javax.xml.stream.XMLStreamException ex) {
-            throw new javax.xml.stream.XMLStreamException("Invalid metadata content, Failed to convert to OMElement");
+            throw new javax.xml.stream.XMLStreamException("Invalid metadata content, Failed to convert to OMElement", ex);
         }
         FederatedAuthenticatorConfig federatedAuthenticatorConfigMetadata;
         try {
@@ -301,7 +301,7 @@ public class SAMLMetadataConverter implements MetadataConverter {
                         if (!isTransactionStarted) {
                             registry.rollbackTransaction();
                         }
-                        throw new IdentityProviderManagementException("Error while deleting metadata String in registry for " + idPName);
+                        throw new IdentityProviderManagementException("Error while deleting metadata String in registry for " + idPName, e);
                     }
 
 
@@ -312,7 +312,7 @@ public class SAMLMetadataConverter implements MetadataConverter {
 
 
         } catch (RegistryException e) {
-            throw new IdentityProviderManagementException("Error while setting a registry object in IdentityProviderManager");
+            throw new IdentityProviderManagementException("Error while setting a registry object in IdentityProviderManager", e);
         }
 
     }
@@ -378,11 +378,11 @@ public class SAMLMetadataConverter implements MetadataConverter {
                     registry.rollbackTransaction();
                 }
 
-                throw new IdentityProviderManagementException("Error while creating resource in registry");
+                throw new IdentityProviderManagementException("Error while creating resource in registry", e);
             }
 
         } catch (RegistryException e) {
-            throw new IdentityProviderManagementException("Error while setting a registry object in IdentityProviderManager");
+            throw new IdentityProviderManagementException("Error while setting a registry object in IdentityProviderManager", e);
         }
     }
 
