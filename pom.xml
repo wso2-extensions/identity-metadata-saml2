@@ -232,7 +232,7 @@
     </dependencyManagement>
 
     <properties>
-        <org.wso2.carbon.identity.framework.version>5.14.114-SNAPSHOT</org.wso2.carbon.identity.framework.version>
+        <org.wso2.carbon.identity.framework.version>5.14.117-SNAPSHOT</org.wso2.carbon.identity.framework.version>
         <carbon.identity.package.import.version.range>[5.14.67, 6.0.0)</carbon.identity.package.import.version.range>
 
         <commons.collections.version>3.2.0.wso2v1</commons.collections.version>

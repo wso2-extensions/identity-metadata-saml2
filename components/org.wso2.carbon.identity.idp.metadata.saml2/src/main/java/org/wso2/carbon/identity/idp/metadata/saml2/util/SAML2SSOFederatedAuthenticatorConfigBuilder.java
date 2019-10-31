@@ -47,7 +47,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
             entityDescriptor = (EntityDescriptor) XMLObjectSupport.unmarshallFromInputStream(
                     XMLObjectProviderRegistrySupport.getParserPool(), inputStream);
         } catch (UnmarshallingException | XMLParserException e) {
-            throw new IdentityApplicationManagementException("Error while converting file content to entity descriptor");
+            throw new IdentityApplicationManagementException("Error while converting file content to entity descriptor", e);
         }
         return entityDescriptor;
     }
