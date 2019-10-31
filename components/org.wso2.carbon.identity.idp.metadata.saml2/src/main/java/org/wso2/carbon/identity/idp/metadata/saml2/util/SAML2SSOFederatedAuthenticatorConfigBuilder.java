@@ -53,7 +53,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
             XMLObject xmlObject = idpMetaDataProvider.getMetadata();
             entityDescriptor = (EntityDescriptor) xmlObject;
         } catch (MetadataProviderException | SAXException | ParserConfigurationException | IOException e) {
-            throw new IdentityApplicationManagementException("Error while converting file content to entity descriptor");
+            throw new IdentityApplicationManagementException("Error while converting file content to entity descriptor", e);
         }
         return entityDescriptor;
     }
@@ -76,7 +76,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                     try {
                         idpssoDescriptor = (IDPSSODescriptor) roleDescriptor;
                     } catch (ClassCastException ex) {
-                        throw new IdentityApplicationManagementException("No IDP Descriptors found, invalid file content");
+                        throw new IdentityApplicationManagementException("No IDP Descriptors found, invalid file content", ex);
                     }
                     Property properties[] = new Property[24];
 
