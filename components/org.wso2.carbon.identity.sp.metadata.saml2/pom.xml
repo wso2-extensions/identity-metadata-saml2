@@ -71,6 +71,10 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.identity.saml.common</groupId>
+            <artifactId>org.wso2.carbon.identity.saml.common.util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.orbit.org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
         </dependency>
@@ -132,8 +136,8 @@
                             org.opensaml.xmlsec.signature,
                             org.opensaml.xmlsec.config,
                             org.wso2.carbon.identity.core.model,
-                            org.wso2.carbon.identity.core.util,
                             org.wso2.carbon.registry.core,
+                            org.wso2.carbon.identity.saml.common.util.*; version="${saml.common.util.version.range}",
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.identity.sp.metadata.saml2.*; version="${project.version}",

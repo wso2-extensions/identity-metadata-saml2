@@ -35,7 +35,7 @@ import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.core.config.InitializationException;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
-import org.wso2.carbon.identity.core.util.SAMLInitializer;
+import org.wso2.carbon.identity.saml.common.util.SAMLInitializer;
 import org.wso2.carbon.identity.sp.metadata.saml2.exception.InvalidMetadataException;
 import org.wso2.carbon.registry.core.Registry;
 
