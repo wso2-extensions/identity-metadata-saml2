@@ -20,9 +20,10 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.wso2.carbon.identity.saml.common.util.SAMLInitializer;
 import org.wso2.carbon.idp.mgt.MetadataException;
 import javax.xml.namespace.QName;
 
@@ -38,19 +39,18 @@ public class BuilderUtil {
     public static void doBootstrap() {
         if (!isBootStrapped) {
             try {
-                DefaultBootstrap.bootstrap();
+                SAMLInitializer.doBootstrap();
                 isBootStrapped = true;
-            } catch (ConfigurationException e) {
-                log.error("Error in bootstrapping the OpenSAML2 library", e);
+            } catch (InitializationException e) {
+                log.error("Error in bootstrapping the OpenSAML3 library", e);
             }
-
         }
     }
 
     public static <T> T createSAMLObject(String namespaceURI, String localName, String namespacePrefix)
             throws MetadataException {
 
-        XMLObjectBuilderFactory builderFactory = org.opensaml.xml.Configuration.getBuilderFactory();
+        XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         if (log.isDebugEnabled()) {
             log.debug("Building the SAML Object with namespaceURI: " + namespaceURI + " prefix:" + namespacePrefix);

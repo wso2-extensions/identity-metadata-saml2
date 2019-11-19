@@ -20,9 +20,9 @@ package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml2.metadata.SingleSignOnService;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.SingleSignOnService;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.IdentityProvider;
 import org.wso2.carbon.identity.application.common.model.Property;
@@ -32,9 +32,6 @@ import org.wso2.carbon.identity.idp.metadata.saml2.ConfigElements;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class defines methods that are used to convert a metadata String using saml2SSOFederatedAuthenticatedConfig

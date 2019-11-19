@@ -20,20 +20,20 @@ package org.wso2.carbon.identity.idp.metadata.saml2;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.exceptions.XMLSecurityException;
-import org.opensaml.Configuration;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.KeyDescriptor;
-import org.opensaml.saml2.metadata.RoleDescriptor;
-import org.opensaml.xml.XMLObjectBuilder;
-import org.opensaml.xml.io.Marshaller;
-import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.security.credential.UsageType;
-import org.opensaml.xml.security.x509.X509Credential;
-import org.opensaml.xml.signature.KeyInfo;
-import org.opensaml.xml.signature.Signature;
-import org.opensaml.xml.signature.SignatureConstants;
-import org.opensaml.xml.signature.X509Certificate;
-import org.opensaml.xml.signature.X509Data;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.KeyDescriptor;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.x509.X509Credential;
+import org.opensaml.xmlsec.signature.KeyInfo;
+import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
+import org.opensaml.xmlsec.signature.X509Certificate;
+import org.opensaml.xmlsec.signature.X509Data;
 import org.w3c.dom.Document;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
@@ -154,7 +154,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
             log.debug("Marshalling the metadata element contents");
         }
         Document document = builder.newDocument();
-        Marshaller out = org.opensaml.xml.Configuration.getMarshallerFactory().getMarshaller(desc);
+        Marshaller out = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(desc);
 
         try {
             out.marshall(desc, document);
@@ -172,7 +172,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
     @SuppressWarnings ("unchecked")
     public Signature getSignature(EntityDescriptor baseDescriptor) {
         QName qname = Signature.DEFAULT_ELEMENT_NAME;
-        XMLObjectBuilder<Signature> builder = (XMLObjectBuilder<Signature>) Configuration.getBuilderFactory().
+        XMLObjectBuilder<Signature> builder = (XMLObjectBuilder<Signature>) XMLObjectProviderRegistrySupport.getBuilderFactory().
                 getBuilder(qname);
         Signature signature = builder.buildObject(qname);
         signature.setSigningCredential(credential);

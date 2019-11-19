@@ -55,6 +55,16 @@
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.base</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>opensaml</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>opensaml1</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
@@ -63,10 +73,24 @@
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.security.mgt</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>opensaml</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>opensaml1</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.saml.common</groupId>
+            <artifactId>org.wso2.carbon.identity.saml.common.util</artifactId>
         </dependency>
 
     </dependencies>
@@ -86,12 +110,10 @@
                         </Private-Package>
                         <Import-Package>
                             javax.servlet.http,
-                            org.opensaml,
                             org.osgi.service.http,
                             org.wso2.carbon.identity.application.authentication.framework.exception,
                             org.wso2.carbon.identity.application.authentication.framework.inbound,
                             org.wso2.carbon.utils,
-                            org.apache.commons.codec.binary; version="${commons-codec.wso2.osgi.version.range}",
                             org.wso2.carbon.identity.core; version="${carbon.identity.package.import.version.range}",
                             javax.xml.parsers ; version="${javax.xml.range}",
                             javax.crypto;version="${javax.crypto.range}",
@@ -109,16 +131,20 @@
                             org.apache.xml.security.signature; version="${org.apache.xml.security.range}",
                             org.apache.xml.security.utils; version="${org.apache.xml.security.range}",
                             org.joda.time; version="${joda.wso2.osgi.version.range}",
-                            org.opensaml.common.xml; version="${org.opensaml.version}",
-                            org.opensaml.saml2.metadata; version="${org.opensaml.version}",
-                            org.opensaml.saml2.metadata.impl; version="${org.opensaml.version}",
-                            org.opensaml.saml2.metadata.provider; version="${org.opensaml.version}",
-                            org.opensaml.xml; version="${org.opensaml.version}",
-                            org.opensaml.xml.io; version="${org.opensaml.version}",
-                            org.opensaml.xml.parse; version="${org.opensaml.version}",
-                            org.opensaml.xml.security.credential; version="${org.opensaml.version}",
-                            org.opensaml.xml.security.x509; version="${org.opensaml.version}",
-                            org.opensaml.xml.signature; version="${org.opensaml.version}",
+                            org.opensaml.saml.common.xml; version="${org.opensaml.version}",
+                            org.opensaml.saml.saml2.metadata; version="${org.opensaml.version}",
+                            org.opensaml.core.xml; version="${org.opensaml.version}",
+                            org.opensaml.core.xml.io; version="${org.opensaml.version}",
+                            net.shibboleth.utilities.java.support.xml; version="${org.opensaml.version}",
+                            org.opensaml.security.credential; version="${org.opensaml.version}",
+                            org.opensaml.security.x509; version="${org.opensaml.version}",
+                            org.opensaml.xmlsec.signature; version="${org.opensaml.version}",
+                            org.opensaml.xmlsec.signature.support; version="${org.opensaml.version}",
+                            org.opensaml.xmlsec.config; version="${org.opensaml.version}",
+                            org.opensaml.core.xml.config; version="${org.opensaml.version}",
+                            org.opensaml.core.xml.util; version="${org.opensaml.version}",
+                            org.opensaml.core.config; version="${org.opensaml.version}",
+                            org.opensaml.saml.config; version="${org.opensaml.version}",
                             org.osgi.framework; version="${osgi.framework.imp.pkg.version.range}",
                             org.osgi.service.component; version="${osgi.service.component.imp.pkg.version.range}",
                             org.w3c.dom; version="${org.wso2.dom.version.range}",
@@ -133,6 +159,7 @@
                             version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.identity.core.handler;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.identity.core.util;version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.saml.common.util.*; version="${saml.common.util.version.range}",
                             org.wso2.carbon.idp.mgt; version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.idp.mgt.util; version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.registry.core.service;version="${carbon.kernel.registry.imp.pkg.version}",
@@ -140,7 +167,6 @@
                             org.wso2.carbon.security.keystore;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.user.core.service; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.utils.multitenancy;version="${carbon.kernel.package.import.version.range}",
-                            org.xml.sax ;version="${org.xml.sax.range}" ,
                             org.wso2.carbon.registry.core; version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.core.exceptions; version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.core.jdbc.utils; version="${carbon.kernel.registry.imp.pkg.version}",

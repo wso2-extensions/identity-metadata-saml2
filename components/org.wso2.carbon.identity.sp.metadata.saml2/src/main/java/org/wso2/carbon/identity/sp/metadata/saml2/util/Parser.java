@@ -19,35 +19,31 @@ package org.wso2.carbon.identity.sp.metadata.saml2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.metadata.AssertionConsumerService;
-import org.opensaml.saml2.metadata.AttributeConsumingService;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.KeyDescriptor;
-import org.opensaml.saml2.metadata.NameIDFormat;
-import org.opensaml.saml2.metadata.RequestedAttribute;
-import org.opensaml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml2.metadata.SingleLogoutService;
-import org.opensaml.saml2.metadata.provider.DOMMetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.parse.BasicParserPool;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.KeyDescriptor;
+import org.opensaml.saml.saml2.metadata.NameIDFormat;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.SingleLogoutService;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.core.config.InitializationException;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
-import org.wso2.carbon.identity.core.util.IdentityUtil;
+import org.wso2.carbon.identity.saml.common.util.SAMLInitializer;
 import org.wso2.carbon.identity.sp.metadata.saml2.exception.InvalidMetadataException;
 import org.wso2.carbon.registry.core.Registry;
-import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 public class Parser {
 
@@ -55,7 +51,7 @@ public class Parser {
 
     protected Registry registry = null;
     private final String DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
-
+    private static boolean isBootStrapped = false;
 
     public Parser(Registry registry) {
         this.registry = registry;
@@ -152,7 +148,7 @@ public class Parser {
                 if (descriptor.getUse().toString().equals("SIGNING")) {
 
                     try {
-                        samlssoServiceProviderDO.setX509Certificate(org.opensaml.xml.security.keyinfo.KeyInfoHelper.getCertificates(descriptor.getKeyInfo()).get(0));
+                        samlssoServiceProviderDO.setX509Certificate(org.opensaml.xmlsec.keyinfo.KeyInfoSupport.getCertificates(descriptor.getKeyInfo()).get(0));
                         samlssoServiceProviderDO.setCertAlias(entityDescriptor.getEntityID());
                     } catch (java.security.cert.CertificateException ex) {
                         log.error("Error While setting Certificate and alias", ex);
@@ -245,21 +241,27 @@ public class Parser {
      */
     private EntityDescriptor generateMetadataObjectFromString(String metadataString) {
         EntityDescriptor entityDescriptor = null;
+        InputStream inputStream;
         try {
-            DocumentBuilderFactory factory = IdentityUtil.getSecuredDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new ByteArrayInputStream(metadataString.getBytes()));
-            Element node = document.getDocumentElement();
-            DOMMetadataProvider idpMetaDataProvider = new DOMMetadataProvider(node);
-            idpMetaDataProvider.setRequireValidMetadata(true);
-            idpMetaDataProvider.setParserPool(new BasicParserPool());
-            idpMetaDataProvider.initialize();
-            XMLObject xmlObject = idpMetaDataProvider.getMetadata();
-            entityDescriptor = (EntityDescriptor) xmlObject;
-        } catch (MetadataProviderException | SAXException | ParserConfigurationException | IOException e) {
+            doBootstrap();
+            inputStream = new ByteArrayInputStream(metadataString.trim().getBytes(StandardCharsets.UTF_8));
+            entityDescriptor = (EntityDescriptor) XMLObjectSupport.unmarshallFromInputStream(
+                    XMLObjectProviderRegistrySupport.getParserPool(), inputStream);
+        } catch ( UnmarshallingException | XMLParserException e) {
             log.error("Error While reading Service Provider metadata xml", e);
         }
         return entityDescriptor;
+    }
+
+    public static void doBootstrap() {
+        if (!isBootStrapped) {
+            try {
+                SAMLInitializer.doBootstrap();
+                isBootStrapped = true;
+            } catch (InitializationException e) {
+                log.error("Error in bootstrapping the OpenSAML3 library", e);
+            }
+
+        }
     }
 }
