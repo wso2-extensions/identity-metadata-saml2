@@ -239,7 +239,7 @@ public class Parser {
      * @param metadataString
      * @return samlssoServiceProviderDO
      */
-    private EntityDescriptor generateMetadataObjectFromString(String metadataString) {
+    private EntityDescriptor generateMetadataObjectFromString(String metadataString) throws InvalidMetadataException {
         EntityDescriptor entityDescriptor = null;
         InputStream inputStream;
         try {
@@ -248,7 +248,7 @@ public class Parser {
             entityDescriptor = (EntityDescriptor) XMLObjectSupport.unmarshallFromInputStream(
                     XMLObjectProviderRegistrySupport.getParserPool(), inputStream);
         } catch ( UnmarshallingException | XMLParserException e) {
-            log.error("Error While reading Service Provider metadata xml", e);
+            throw new InvalidMetadataException("Error reading SAML Service Provider metadata xml.", e);
         }
         return entityDescriptor;
     }
