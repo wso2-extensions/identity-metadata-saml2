@@ -50,6 +50,7 @@ public class BuilderUtil {
     public static <T> T createSAMLObject(String namespaceURI, String localName, String namespacePrefix)
             throws MetadataException {
 
+        doBootstrap();
         XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         if (log.isDebugEnabled()) {
