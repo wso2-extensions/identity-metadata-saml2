@@ -178,11 +178,11 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
         return stringWriter.toString();
     }
 
-    public void buildNameIdFormat(IDPSSODescriptor idpSsoDesc) throws MetadataException {
+    public void buildNameIdFormat(IDPSSODescriptor idpSsoDesc,String nameIDFormat) throws MetadataException {
 
         NameIDFormat nameIdFormat = BuilderUtil.createSAMLObject(ConfigElements.FED_METADATA_NS,
                 ConfigElements.NAMEID_FORMAT, "");
-        nameIdFormat.setFormat(IDPMetadataConstant.NAME_FORMAT_ID_SAML);
+        nameIdFormat.setFormat(nameIDFormat);
         idpSsoDesc.getNameIDFormats().add(nameIdFormat);
     }
 

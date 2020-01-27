@@ -32,17 +32,23 @@ import org.wso2.carbon.identity.idp.metadata.saml2.ConfigElements;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
+import org.opensaml.saml2.metadata.AttributeProfile;
+import org.opensaml.saml2.metadata.impl.AttributeProfileImpl;
 
 /**
  * This class defines methods that are used to convert a metadata String using saml2SSOFederatedAuthenticatedConfig
  */
 public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
-    static final long ONE_MINUTE_IN_MILLIS=60000;
+    static final long ONE_MINUTE_IN_MILLIS = 60000;
 
     private boolean samlMetadataSigningEnabled;
 
     private boolean wantAuthRequestSigned;
+
+    private String nameIDFormat;
+
+    private String attributeProfileURI;
 
     public String build(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
 
@@ -52,8 +58,14 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
         setValidityPeriod(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildSupportedProtocol(idpSsoDesc);
         buildSingleSignOnService(idpSsoDesc, samlFederatedAuthenticatorConfig);
-        String samlSsoURL =  getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+        String samlSsoURL = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                 IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL).getValue();
+        wantAuthRequestSigned = Boolean.parseBoolean(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_WANT_AUTHN_REQUESTS_SIGNED_ENABLED).getValue());
+        nameIDFormat = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_NAME_ID_FORMAT).getValue();
+        attributeProfileURI = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_ATTRIBUTE_PROFILE).getValue();
         for (Property property : samlFederatedAuthenticatorConfig.getProperties()) {
             if (StringUtils.equals(samlSsoURL, property.getValue())) {
                 continue; // Skip since default SSO URL has been already added
@@ -74,7 +86,12 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
                 idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
             }
         }
-        buildNameIdFormat(idpSsoDesc);
+
+        AttributeProfile attributeProfile = BuilderUtil.createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.ATTRIBUTE_PROFILE, "");
+        attributeProfile.setProfileURI(attributeProfileURI);
+        idpSsoDesc.getAttributeProfiles().add(attributeProfile);
+        buildNameIdFormat(idpSsoDesc, nameIDFormat);
+
         buildSingleLogOutService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildArtifactResolutionService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         entityDescriptor.getRoleDescriptors().add(idpSsoDesc);
@@ -119,7 +136,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     protected abstract void buildKeyDescriptor(EntityDescriptor entityDescriptor) throws MetadataException;
 
-    protected abstract void buildNameIdFormat(IDPSSODescriptor idpSsoDesc) throws MetadataException;
+    protected abstract void buildNameIdFormat(IDPSSODescriptor idpSsoDesc, String NameIDFormat) throws MetadataException;
 
     protected abstract void buildSingleSignOnService(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException;
 
