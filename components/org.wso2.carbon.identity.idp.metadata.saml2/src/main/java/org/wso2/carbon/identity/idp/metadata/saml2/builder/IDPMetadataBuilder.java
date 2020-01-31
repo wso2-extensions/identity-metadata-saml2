@@ -44,11 +44,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     private boolean samlMetadataSigningEnabled;
 
-    private boolean wantAuthRequestSigned;
-
-    private String nameIDFormat;
-
-    private String attributeProfileURI;
+    private boolean samlAuthRequestSigningEnabled;
 
     public String build(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
 
@@ -60,12 +56,8 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
         buildSingleSignOnService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         String samlSsoURL = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                 IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL).getValue();
-        wantAuthRequestSigned = Boolean.parseBoolean(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
-                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_WANT_AUTHN_REQUESTS_SIGNED_ENABLED).getValue());
-        nameIDFormat = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
-                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_NAME_ID_FORMAT).getValue();
-        attributeProfileURI = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
-                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_ATTRIBUTE_PROFILE).getValue();
+        samlAuthRequestSigningEnabled = Boolean.parseBoolean(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_AUTHN_REQUESTS_SIGNING_ENABLED).getValue());
         for (Property property : samlFederatedAuthenticatorConfig.getProperties()) {
             if (StringUtils.equals(samlSsoURL, property.getValue())) {
                 continue; // Skip since default SSO URL has been already added
@@ -86,20 +78,13 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
                 idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
             }
         }
-
-        AttributeProfile attributeProfile = BuilderUtil.createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.ATTRIBUTE_PROFILE, "");
-        attributeProfile.setProfileURI(attributeProfileURI);
-        idpSsoDesc.getAttributeProfiles().add(attributeProfile);
-        buildNameIdFormat(idpSsoDesc, nameIDFormat);
-
         buildSingleLogOutService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildArtifactResolutionService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         entityDescriptor.getRoleDescriptors().add(idpSsoDesc);
         buildKeyDescriptor(entityDescriptor);
         buildExtensions(idpSsoDesc);
-        idpSsoDesc.setWantAuthnRequestsSigned(wantAuthRequestSigned);
+        idpSsoDesc.setWantAuthnRequestsSigned(samlAuthRequestSigningEnabled);
         setSamlMetadataSigningEnabled(samlFederatedAuthenticatorConfig);
-
         return marshallDescriptor(entityDescriptor);
     }
 
@@ -136,7 +121,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     protected abstract void buildKeyDescriptor(EntityDescriptor entityDescriptor) throws MetadataException;
 
-    protected abstract void buildNameIdFormat(IDPSSODescriptor idpSsoDesc, String NameIDFormat) throws MetadataException;
+    protected abstract void buildNameIdFormat(IDPSSODescriptor idpSsoDesc) throws MetadataException;
 
     protected abstract void buildSingleSignOnService(IDPSSODescriptor idpSsoDesc, FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException;
 
@@ -194,15 +179,15 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
      *
      * @return Value of wantAUthnRequestSigned flag
      */
-    public boolean isWantAuthRequestSigned() {
-        return wantAuthRequestSigned;
+    public boolean isSamlAuthRequestSignedEnabled() {
+        return samlAuthRequestSigningEnabled;
     }
 
     /***
      * Set the value of wantAUthnRequestSigned flag
-     * @param wantAuthRequestSigned
+     * @param samlAuthRequestSignedEnabled
      */
-    public void setWantAuthRequestSigned(boolean wantAuthRequestSigned) {
-        this.wantAuthRequestSigned = wantAuthRequestSigned;
+    public void setSamlAuthRequestSignedEnabled(boolean samlAuthRequestSignedEnabled) {
+        this.samlAuthRequestSigningEnabled = samlAuthRequestSignedEnabled;
     }
 }
