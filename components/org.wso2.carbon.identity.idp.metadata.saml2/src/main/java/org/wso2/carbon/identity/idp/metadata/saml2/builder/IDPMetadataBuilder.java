@@ -179,7 +179,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
      *
      * @return Value of wantAUthnRequestSigned flag
      */
-    public boolean isSamlAuthRequestSignedEnabled() {
+    public boolean isWantAuthRequestSigned() {
         return samlAuthRequestSigningEnabled;
     }
 
@@ -187,7 +187,7 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
      * Set the value of wantAUthnRequestSigned flag
      * @param samlAuthRequestSignedEnabled
      */
-    public void setSamlAuthRequestSignedEnabled(boolean samlAuthRequestSignedEnabled) {
+    public void setWantAuthRequestSigned(boolean samlAuthRequestSignedEnabled) {
         this.samlAuthRequestSigningEnabled = samlAuthRequestSignedEnabled;
     }
 }
