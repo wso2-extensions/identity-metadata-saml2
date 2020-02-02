@@ -184,7 +184,6 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
                 ConfigElements.NAMEID_FORMAT, "");
         nameIdFormat.setFormat(IDPMetadataConstant.NAME_FORMAT_ID_SAML);
         idpSsoDesc.getNameIDFormats().add(nameIdFormat);
-
     }
 
     public void buildSingleSignOnService(IDPSSODescriptor idpSsoDesc,
