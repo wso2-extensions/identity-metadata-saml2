@@ -38,11 +38,11 @@ import org.wso2.carbon.idp.mgt.MetadataException;
  */
 public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
-    static final long ONE_MINUTE_IN_MILLIS=60000;
+    static final long ONE_MINUTE_IN_MILLIS = 60000;
 
     private boolean samlMetadataSigningEnabled;
 
-    private boolean wantAuthRequestSigned;
+    private boolean samlAuthRequestSigningEnabled;
 
     public String build(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
 
@@ -52,8 +52,10 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
         setValidityPeriod(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildSupportedProtocol(idpSsoDesc);
         buildSingleSignOnService(idpSsoDesc, samlFederatedAuthenticatorConfig);
-        String samlSsoURL =  getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+        String samlSsoURL = getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
                 IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL).getValue();
+        samlAuthRequestSigningEnabled = Boolean.parseBoolean(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                IdentityApplicationConstants.Authenticator.SAML2SSO.SAML_METADATA_AUTHN_REQUESTS_SIGNING_ENABLED).getValue());
         for (Property property : samlFederatedAuthenticatorConfig.getProperties()) {
             if (StringUtils.equals(samlSsoURL, property.getValue())) {
                 continue; // Skip since default SSO URL has been already added
@@ -74,15 +76,13 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
                 idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
             }
         }
-        buildNameIdFormat(idpSsoDesc);
         buildSingleLogOutService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         buildArtifactResolutionService(idpSsoDesc, samlFederatedAuthenticatorConfig);
         entityDescriptor.getRoleDescriptors().add(idpSsoDesc);
         buildKeyDescriptor(entityDescriptor);
         buildExtensions(idpSsoDesc);
-        idpSsoDesc.setWantAuthnRequestsSigned(wantAuthRequestSigned);
+        idpSsoDesc.setWantAuthnRequestsSigned(samlAuthRequestSigningEnabled);
         setSamlMetadataSigningEnabled(samlFederatedAuthenticatorConfig);
-
         return marshallDescriptor(entityDescriptor);
     }
 
@@ -178,14 +178,14 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
      * @return Value of wantAUthnRequestSigned flag
      */
     public boolean isWantAuthRequestSigned() {
-        return wantAuthRequestSigned;
+        return samlAuthRequestSigningEnabled;
     }
 
     /***
      * Set the value of wantAUthnRequestSigned flag
-     * @param wantAuthRequestSigned
+     * @param samlAuthRequestSignedEnabled
      */
-    public void setWantAuthRequestSigned(boolean wantAuthRequestSigned) {
-        this.wantAuthRequestSigned = wantAuthRequestSigned;
+    public void setWantAuthRequestSigned(boolean samlAuthRequestSignedEnabled) {
+        this.samlAuthRequestSigningEnabled = samlAuthRequestSignedEnabled;
     }
 }
