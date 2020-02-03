@@ -32,8 +32,6 @@ import org.wso2.carbon.identity.idp.metadata.saml2.ConfigElements;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
-import org.opensaml.saml2.metadata.AttributeProfile;
-import org.opensaml.saml2.metadata.impl.AttributeProfileImpl;
 
 /**
  * This class defines methods that are used to convert a metadata String using saml2SSOFederatedAuthenticatedConfig
