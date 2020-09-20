@@ -83,10 +83,10 @@ public class SAMLMetadataConverter implements MetadataConverter {
     /**
      * Retrieves whether the SAML IDP is available in registry or not.
      *
-     * @param tenantId ID of the tenant domain
-     * @param idPName  ID of the IDP which is needed to be checked whether it has a metadata string in registry
-     * @return a boolean regarding to the condition
-     * @throws IdentityProviderManagementException if there is an error in the registry access
+     * @param tenantId ID of the tenant domain.
+     * @param idPName  ID of the IDP which is needed to be checked whether it has a metadata string in registry.
+     * @return True if the resource exists.
+     * @throws IdentityProviderManagementException if there is an error in the registry access.
      */
     public boolean canDelete(int tenantId, String idPName) throws IdentityProviderManagementException {
 
@@ -110,10 +110,10 @@ public class SAMLMetadataConverter implements MetadataConverter {
             throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException {
 
         String metadata = "";
+        final String META_DATA_SAML = "meta_data_saml";
         for (Property property : properties) {
 
-            if (property != null && property.getName() != null &&
-                    property.getName().toString().equals("meta_data_saml")) {
+            if (property != null && META_DATA_SAML.equals(property.getName())) {
                 metadata = property.getValue();
             }
         }
@@ -300,9 +300,10 @@ public class SAMLMetadataConverter implements MetadataConverter {
     /**
      * Deletes an IDP metadata registry component if exists
      *
-     * @param idPName , tenantId
+     * @param tenantId Id of the tenant.
+     * @param idPName  Name of the identity provider.
      * @throws IdentityProviderManagementException Error when deleting Identity Provider
-     *                                             information from registry
+     *                                             information from registry.
      */
     public void deleteMetadataString(int tenantId, String idPName) throws IdentityProviderManagementException {
 
