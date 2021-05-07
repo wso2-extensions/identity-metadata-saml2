@@ -82,7 +82,8 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
         String metadata = null;
         try {
             metadata = identityProviderManager.getResidentIDPMetadata(tennantDomain);
-        } catch (IdentityProviderManagementException ex) {
+        } catch (IdentityProviderManagementException e) {
+            log.error("Internal Server Error", e);
             IdentityMessageContext context = new IdentityMessageContext(identityRequest);
             SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder responseBuilder = new SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder(context);
             responseBuilder.setMessage("Internal Server Error");
@@ -95,6 +96,4 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
         return responseBuilder;
 
     }
-
-
 }
