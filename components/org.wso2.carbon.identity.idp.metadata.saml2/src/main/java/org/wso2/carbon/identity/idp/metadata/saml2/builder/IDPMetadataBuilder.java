@@ -19,6 +19,8 @@
 package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
@@ -38,6 +40,8 @@ import org.wso2.carbon.idp.mgt.MetadataException;
  */
 public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
+    private static final Log log = LogFactory.getLog(IDPMetadataBuilder.class);
+
     static final long ONE_MINUTE_IN_MILLIS = 60000;
 
     private boolean samlMetadataSigningEnabled;
@@ -46,7 +50,9 @@ public abstract class IDPMetadataBuilder extends AbstractIdentityHandler {
 
     public String build(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
 
-
+        if (log.isDebugEnabled()) {
+            log.debug("Starting to build the SAML Federated Authenticator Config.");
+        }
         EntityDescriptor entityDescriptor = buildEntityDescriptor(samlFederatedAuthenticatorConfig);
         IDPSSODescriptor idpSsoDesc = buildIDPSSODescriptor();
         setValidityPeriod(idpSsoDesc, samlFederatedAuthenticatorConfig);

@@ -19,6 +19,8 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -56,6 +58,8 @@ import javax.xml.transform.stream.StreamResult;
  * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config nad vise versa
  */
 public class SAMLMetadataConverter implements MetadataConverter {
+
+    private static final Log log = LogFactory.getLog(SAMLMetadataConverter.class);
 
     /**
      * Retrieves whether this property contains SAML Metadata     *
@@ -280,7 +284,9 @@ public class SAMLMetadataConverter implements MetadataConverter {
 
         DefaultIDPMetadataBuilder builder = new DefaultIDPMetadataBuilder();
         try {
-
+            if (log.isDebugEnabled()) {
+                log.debug("Generating the metadata string.");
+            }
             return builder.build(federatedAuthenticatorConfig);
         } catch (MetadataException ex) {
             throw new IdentityProviderSAMLException("Error invoking build in IDPMetadataBuilder", ex);

@@ -77,11 +77,14 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
     public IdentityResponse.IdentityResponseBuilder process(IdentityRequest identityRequest) throws
             FrameworkException {
 
-        String tennantDomain = identityRequest.getTenantDomain();
+        String tenantDomain = identityRequest.getTenantDomain();
         IdentityProviderManager identityProviderManager = (IdentityProviderManager) IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
         String metadata = null;
         try {
-            metadata = identityProviderManager.getResidentIDPMetadata(tennantDomain);
+            if (log.isDebugEnabled()) {
+                log.debug("Starting to retrieve resident IdP metadata for tenant: " + tenantDomain);
+            }
+            metadata = identityProviderManager.getResidentIDPMetadata(tenantDomain);
         } catch (IdentityProviderManagementException e) {
             log.error("Internal Server Error", e);
             IdentityMessageContext context = new IdentityMessageContext(identityRequest);
