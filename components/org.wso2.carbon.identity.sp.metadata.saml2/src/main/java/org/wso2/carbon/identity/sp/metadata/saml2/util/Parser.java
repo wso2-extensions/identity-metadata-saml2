@@ -17,6 +17,7 @@
  */
 package org.wso2.carbon.identity.sp.metadata.saml2.util;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -198,8 +199,19 @@ public class Parser {
             List<RoleDescriptor> roleDescriptors = entityDescriptor.getRoleDescriptors();
             //TODO: handle when multiple role descriptors are available
             //assuming only one SPSSO is inside the entitydescripter
-            RoleDescriptor roleDescriptor = roleDescriptors.get(0);
-            SPSSODescriptor spssoDescriptor = (SPSSODescriptor) roleDescriptor;
+            RoleDescriptor roleDescriptor;
+            SPSSODescriptor spssoDescriptor;
+
+            if (CollectionUtils.isEmpty(roleDescriptors)) {
+                throw new InvalidMetadataException("Role descriptor not found.");
+            }
+            roleDescriptor = roleDescriptors.get(0);
+
+            if (!(roleDescriptor instanceof SPSSODescriptor)) {
+                throw new InvalidMetadataException("Invalid role descriptor class found.");
+            }
+            spssoDescriptor = (SPSSODescriptor) roleDescriptor;
+
             this.setAssertionConsumerUrl(spssoDescriptor, samlssoServiceProviderDO);
             //Response Signing Algorithm - not found
             //Response Digest Algorithm - not found
