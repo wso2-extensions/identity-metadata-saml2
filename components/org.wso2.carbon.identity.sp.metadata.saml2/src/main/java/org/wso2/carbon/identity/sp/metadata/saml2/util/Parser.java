@@ -205,26 +205,16 @@ public class Parser {
                 throw new InvalidMetadataException("Role descriptor not found.");
             }
 
-            if (roleDescriptors.size() > 1) {
-                for (RoleDescriptor roleDescriptor : roleDescriptors) {
-                    if (roleDescriptor instanceof SPSSODescriptor) {
-                        spssoDescriptor = (SPSSODescriptor) roleDescriptor;
-                        break;
-                    }
+            for (RoleDescriptor roleDescriptor : roleDescriptors) {
+                if (roleDescriptor instanceof SPSSODescriptor) {
+                    spssoDescriptor = (SPSSODescriptor) roleDescriptor;
+                    break;
                 }
-                if (spssoDescriptor == null) {
-                    throw new InvalidMetadataException(
-                            "No SP Descriptors found, invalid file content."
-                    );
-                }
-            } else {
-                if (roleDescriptors.get(0) instanceof SPSSODescriptor) {
-                    spssoDescriptor = (SPSSODescriptor) roleDescriptors.get(0);
-                } else {
-                    throw new InvalidMetadataException(
-                            "No SP Descriptors found, invalid file content."
-                    );
-                }
+            }
+            if (spssoDescriptor == null) {
+                throw new InvalidMetadataException(
+                        "No SP Descriptors found, invalid file content."
+                );
             }
 
             this.setAssertionConsumerUrl(spssoDescriptor, samlssoServiceProviderDO);
