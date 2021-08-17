@@ -127,8 +127,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                 List<SingleSignOnService> singleSignOnServices = idpssoDescriptor.getSingleSignOnServices();
                 if (CollectionUtils.isNotEmpty(singleSignOnServices)) {
                     boolean found = false;
-                    for (int j = 0; j < singleSignOnServices.size(); j++) {
-                        SingleSignOnService singleSignOnService = singleSignOnServices.get(j);
+                    for (SingleSignOnService singleSignOnService : singleSignOnServices) {
                         if (singleSignOnService != null) {
                             if (singleSignOnService.getLocation() != null) {
                                 property.setValue(singleSignOnService.getLocation());
