@@ -15,12 +15,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
 /**
- * This class defines SAML specific namespace String constants
+ * This class defines SAML specific namespace String constants.
  */
-
 public final class IDPMetadataConstant {
 
     public static String HTTP_BINDING_REDIRECT_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";

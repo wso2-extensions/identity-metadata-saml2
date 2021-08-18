@@ -2,7 +2,7 @@
  * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
+ * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,25 +15,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2.builder;
 
-import org.opensaml.xmlsec.signature.Signature;
-import org.opensaml.xmlsec.signature.support.SignatureException;
-import org.opensaml.xmlsec.signature.support.Signer;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.NameIDFormat;
-import org.opensaml.saml.saml2.metadata.SingleSignOnService;
-import org.opensaml.saml.saml2.metadata.SingleLogoutService;
-import org.opensaml.saml.saml2.metadata.ArtifactResolutionService;
-import org.opensaml.core.xml.io.Marshaller;
-import org.opensaml.core.xml.io.MarshallingException;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
-import org.wso2.carbon.identity.idp.metadata.saml2.MetadataCryptoProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.saml.saml2.metadata.ArtifactResolutionService;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.NameIDFormat;
+import org.opensaml.saml.saml2.metadata.SingleLogoutService;
+import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureException;
+import org.opensaml.xmlsec.signature.support.Signer;
 import org.w3c.dom.Document;
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
@@ -41,35 +40,38 @@ import org.wso2.carbon.identity.application.common.util.IdentityApplicationConst
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.ConfigElements;
 import org.wso2.carbon.identity.idp.metadata.saml2.CryptoProvider;
+import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
+import org.wso2.carbon.identity.idp.metadata.saml2.MetadataCryptoProvider;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.StringWriter;
+
 /**
- * This class builds a metadata String using saml2SSOFederatedAuthenticatedConfig
+ * This class builds a metadata String using a saml2SSOFederatedAuthenticatedConfig.
  */
 public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
 
-    private final static int PRIORITY = 50;
-
+    private static final int PRIORITY = 50;
     private static final Log log = LogFactory.getLog(DefaultIDPMetadataBuilder.class);
 
     @Override
     public int getPriority() {
+
         return PRIORITY;
     }
 
     public String build(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
+
         return super.build(samlFederatedAuthenticatorConfig);
     }
 
@@ -90,6 +92,7 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
 
     public EntityDescriptor buildEntityDescriptor(FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig)
             throws MetadataException {
+
         EntityDescriptor entityDescriptor = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.ENTITY_DESCRIPTOR, "");
         entityDescriptor.setEntityID(getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
@@ -99,21 +102,24 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
     }
 
     public IDPSSODescriptor buildIDPSSODescriptor() throws MetadataException {
-        IDPSSODescriptor idpSsoDesc = BuilderUtil
-                .createSAMLObject(IDPMetadataConstant.IDP_METADATA_SAML2, ConfigElements.IDPSSO_DESCRIPTOR, "");
-        return idpSsoDesc;
+
+        return BuilderUtil.createSAMLObject(IDPMetadataConstant.IDP_METADATA_SAML2, ConfigElements.IDPSSO_DESCRIPTOR,
+                "");
     }
 
     public void buildValidityPeriod(IDPSSODescriptor idpSsoDesc) throws MetadataException {
-        char unit = 'h'; // Default unit is hours
+
+        char unit = 'h'; // Default unit is hours.
         idpSsoDesc.setValidUntil(validityPeriod(1, unit));
     }
 
     public void buildSupportedProtocol(IDPSSODescriptor idpSsoDesc) throws MetadataException {
+
         idpSsoDesc.addSupportedProtocol(IDPMetadataConstant.SUPPORTED_PROTOCOL_SAML2);
     }
 
     public void buildKeyDescriptor(EntityDescriptor entityDescriptor) throws MetadataException {
+
         CryptoProvider cryptoProvider = new MetadataCryptoProvider();
         cryptoProvider.signMetadata(entityDescriptor);
     }
@@ -167,11 +173,7 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
             transformer.transform(source, streamResult);
             stringWriter.close();
             return stringWriter.toString();
-        } catch (TransformerConfigurationException e) {
-            log.error("Error Occurred while creating XML transformer", e);
-        } catch (IOException e) {
-            log.error("Error Occurred while creating XML transformer", e);
-        } catch (TransformerException e) {
+        } catch (TransformerException | IOException e) {
             log.error("Error Occurred while creating XML transformer", e);
         }
 
@@ -187,34 +189,36 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
     }
 
     public void buildSingleSignOnService(IDPSSODescriptor idpSsoDesc,
-                                         FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
+                                         FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig)
+            throws MetadataException {
 
         SingleSignOnService ssoHTTPPost = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
         ssoHTTPPost.setBinding(IDPMetadataConstant.HTTP_BINDING_POST_SAML2);
         ssoHTTPPost.setLocation(
-                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL)
-                        .getValue());
+                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                        IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL).getValue());
         idpSsoDesc.getSingleSignOnServices().add(ssoHTTPPost);
 
         SingleSignOnService ssoHTTPRedirect = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
         ssoHTTPRedirect.setBinding(IDPMetadataConstant.HTTP_BINDING_REDIRECT_SAML2);
         ssoHTTPRedirect.setLocation(
-                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL)
-                        .getValue());
+                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                        IdentityApplicationConstants.Authenticator.SAML2SSO.SSO_URL).getValue());
         idpSsoDesc.getSingleSignOnServices().add(ssoHTTPRedirect);
 
         SingleSignOnService ssoSOAP = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.SSOSERVICE_DESCRIPTOR, "");
         ssoSOAP.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);
         ssoSOAP.setLocation(
-                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig, IdentityApplicationConstants.Authenticator.SAML2SSO
-                        .ECP_URL).getValue());
+                getFederatedAuthenticatorConfigProperty(samlFederatedAuthenticatorConfig,
+                        IdentityApplicationConstants.Authenticator.SAML2SSO.ECP_URL).getValue());
     }
 
     public void buildSingleLogOutService(IDPSSODescriptor idpSsoDesc,
-                                         FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
+                                         FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig)
+            throws MetadataException {
 
         addSingleLogoutService(idpSsoDesc, samlFederatedAuthenticatorConfig, IDPMetadataConstant.SOAP_BINDING_SAML2);
         addSingleLogoutService(idpSsoDesc, samlFederatedAuthenticatorConfig,
@@ -238,7 +242,9 @@ public class DefaultIDPMetadataBuilder extends IDPMetadataBuilder {
     }
 
     public void buildArtifactResolutionService(IDPSSODescriptor idpSsoDesc,
-                                               FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig) throws MetadataException {
+                                               FederatedAuthenticatorConfig samlFederatedAuthenticatorConfig)
+            throws MetadataException {
+
         ArtifactResolutionService aresServiceDesc = BuilderUtil
                 .createSAMLObject(ConfigElements.FED_METADATA_NS, ConfigElements.ARTIFACTRESSERVICE_DESCRIPTOR, "");
         aresServiceDesc.setBinding(IDPMetadataConstant.SOAP_BINDING_SAML2);

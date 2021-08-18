@@ -15,39 +15,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.exceptions.XMLSecurityException;
+import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.core.xml.XMLObjectBuilder;
-import org.opensaml.core.xml.io.Marshaller;
-import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.x509.X509Credential;
 import org.opensaml.xmlsec.signature.KeyInfo;
 import org.opensaml.xmlsec.signature.Signature;
-import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.X509Certificate;
 import org.opensaml.xmlsec.signature.X509Data;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.w3c.dom.Document;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
-import org.wso2.carbon.idp.mgt.MetadataException;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
+import org.wso2.carbon.idp.mgt.MetadataException;
 
+import java.security.cert.CertificateEncodingException;
+import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.security.cert.CertificateEncodingException;
-import java.util.List;
 
 /**
- * This class adds key descriptors to Roledescriptors
+ * This class adds key descriptors to RoleDescriptors.
  */
 public class MetadataCryptoProvider implements CryptoProvider {
 
@@ -56,6 +57,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
     private static final Log log = LogFactory.getLog(MetadataCryptoProvider.class);
 
     public MetadataCryptoProvider() throws MetadataException {
+
         if (log.isDebugEnabled()) {
             log.debug("Creating the credential object");
         }
@@ -87,7 +89,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
     /**
      * Creates the KeyInfo from the provided Credential.
      *
-     * @throws MetadataException
+     * @throws MetadataException if there is an error while creating SAML objects or encoding the certificate.
      */
     private KeyInfo createKeyInfo() throws MetadataException {
 
@@ -119,7 +121,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
      * Creates the key descriptor element with new key info each time called.
      *
      * @return KeyDescriptor with a new KeyInfo element.
-     * @throws MetadataException
+     * @throws MetadataException if there is an error while creating the SAML object or KeyInfo.
      */
     private KeyDescriptor createKeyDescriptor() throws MetadataException {
 
@@ -136,9 +138,9 @@ public class MetadataCryptoProvider implements CryptoProvider {
     /**
      * Marshall the provided descriptor element contents to DOM.
      *
-     * @param desc
-     * @return Document after marshalling the SAML object to XML
-     * @throws MetadataException
+     * @param desc The entity descriptor to be marshalled.
+     * @return Document after marshalling the SAML object to XML.
+     * @throws MetadataException if there is an error while marshalling.
      */
     private Document marshallDescriptor(EntityDescriptor desc) throws MetadataException {
 
@@ -169,11 +171,12 @@ public class MetadataCryptoProvider implements CryptoProvider {
 
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     public Signature getSignature(EntityDescriptor baseDescriptor) {
+
         QName qname = Signature.DEFAULT_ELEMENT_NAME;
-        XMLObjectBuilder<Signature> builder = (XMLObjectBuilder<Signature>) XMLObjectProviderRegistrySupport.getBuilderFactory().
-                getBuilder(qname);
+        XMLObjectBuilder<Signature> builder = (XMLObjectBuilder<Signature>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qname);
         Signature signature = builder.buildObject(qname);
         signature.setSigningCredential(credential);
         signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
@@ -181,5 +184,4 @@ public class MetadataCryptoProvider implements CryptoProvider {
         baseDescriptor.setSignature(signature);
         return signature;
     }
-
 }

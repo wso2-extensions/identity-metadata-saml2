@@ -2,7 +2,7 @@
  * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
+ * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -34,48 +34,57 @@ public class IDPMetadataSAMLServiceComponentHolder {
     private IdpManager idpManager;
 
     public static IDPMetadataSAMLServiceComponentHolder getInstance() {
+
         return instance;
     }
 
     public void setRegistryService(RegistryService registryService) {
+
         this.registryService = registryService;
     }
 
     public RegistryService getRegistryService() {
+
         return registryService;
     }
 
     public RealmService getRealmService() {
+
         return realmService;
     }
 
     public void setRealmService(RealmService realmService) {
+
         this.realmService = realmService;
     }
 
     public ConfigurationContextService getConfigCtxService() {
+
         return configCtxService;
     }
 
     public void setConfigCtxService(ConfigurationContextService configCtxService) {
+
         this.configCtxService = configCtxService;
     }
 
     public HttpService getHttpService() {
+
         return httpService;
     }
 
     public void setHttpService(HttpService httpService) {
+
         this.httpService = httpService;
     }
 
     public IdpManager getIdpManager() {
+
         return idpManager;
     }
 
     public void setIdpManager(IdpManager idpManager) {
+
         this.idpManager = idpManager;
     }
-
-
 }
