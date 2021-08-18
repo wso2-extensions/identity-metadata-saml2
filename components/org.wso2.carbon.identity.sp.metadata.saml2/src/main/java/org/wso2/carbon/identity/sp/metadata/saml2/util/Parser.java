@@ -15,11 +15,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.sp.metadata.saml2.util;
 
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
@@ -30,11 +36,6 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.core.xml.io.UnmarshallingException;
-import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.core.config.InitializationException;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
 import org.wso2.carbon.identity.saml.common.util.SAMLInitializer;
 import org.wso2.carbon.identity.sp.metadata.saml2.exception.InvalidMetadataException;
@@ -46,6 +47,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class provides functionality to convert a metadata String to a SAMLSSOServiceProviderDO.
+ */
 public class Parser {
 
     private static final Log log = LogFactory.getLog(Parser.class);
@@ -55,12 +59,16 @@ public class Parser {
     private static boolean isBootStrapped = false;
 
     public Parser(Registry registry) {
+
         this.registry = registry;
     }
 
-    private void setAssertionConsumerUrl(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) throws InvalidMetadataException {
-        //Assertion Consumer URL
-        //search for the url with the post binding, if there is no post binding select the default url
+    private void setAssertionConsumerUrl(SPSSODescriptor spssoDescriptor,
+                                         SAMLSSOServiceProviderDO samlssoServiceProviderDO)
+            throws InvalidMetadataException {
+
+        // Assertion Consumer URL.
+        // Search for the url with post binding, if there is no post binding selected in the default URL.
         List<AssertionConsumerService> assertionConsumerServices = spssoDescriptor.getAssertionConsumerServices();
         if (assertionConsumerServices != null && assertionConsumerServices.size() > 0) {
             List<String> acs = new ArrayList<>();
@@ -68,29 +76,32 @@ public class Parser {
             for (AssertionConsumerService assertionConsumerService : assertionConsumerServices) {
                 acs.add(assertionConsumerService.getLocation());
                 if (assertionConsumerService.isDefault()) {
-                    samlssoServiceProviderDO.setDefaultAssertionConsumerUrl(assertionConsumerService.getLocation());//changed
-                    samlssoServiceProviderDO.setAssertionConsumerUrl(assertionConsumerService.getLocation());//changed
+                    samlssoServiceProviderDO.setDefaultAssertionConsumerUrl(assertionConsumerService.getLocation());
+                    samlssoServiceProviderDO.setAssertionConsumerUrl(assertionConsumerService.getLocation());
                     foundAssertionConsumerUrl = true;
                 }
             }
             samlssoServiceProviderDO.setAssertionConsumerUrls(acs);
-            //select atleast one
+            // Select at least one.
             if (!foundAssertionConsumerUrl) {
                 samlssoServiceProviderDO.setDefaultAssertionConsumerUrl(assertionConsumerServices.get(0).getLocation());
             }
         } else {
-            throw new InvalidMetadataException("Invalid metadata content, no Assertion Consumer URL found");
+            throw new InvalidMetadataException("Invalid metadata content, no Assertion Consumer URL found.");
         }
     }
 
-    private void setIssuer(EntityDescriptor entityDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) throws InvalidMetadataException {
+    private void setIssuer(EntityDescriptor entityDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO)
+            throws InvalidMetadataException {
+
         if (entityDescriptor.getEntityID() == null || entityDescriptor.getEntityID().length() == 0) {
             throw new InvalidMetadataException("Invalid metadata content, Issuer can't be empty");
         }
-        samlssoServiceProviderDO.setIssuer(entityDescriptor.getEntityID());//correct
+        samlssoServiceProviderDO.setIssuer(entityDescriptor.getEntityID());
     }
 
     private void setNameIDFormat(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         List<NameIDFormat> nameIDFormats = spssoDescriptor.getNameIDFormats();
         if (nameIDFormats.isEmpty()) {
             samlssoServiceProviderDO.setNameIDFormat(DEFAULT_NAME_ID_FORMAT);
@@ -100,48 +111,56 @@ public class Parser {
     }
 
     private void setClaims(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         List<AttributeConsumingService> services;
         services = spssoDescriptor.getAttributeConsumingServices();
         if (services != null && services.size() > 0) {
-            //assuming that only one AttrbuteComsumingIndex exists
+            // Assuming that only one AttributeConsumingIndex exists.
             AttributeConsumingService service = services.get(0);
             List<RequestedAttribute> attributes = service.getRequestAttributes();
             for (RequestedAttribute attribute : attributes) {
                 //set the values to claims
             }
-        } else {
         }
     }
 
-    private void setDoSignAssertions(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    private void setDoSignAssertions(SPSSODescriptor spssoDescriptor,
+                                     SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         samlssoServiceProviderDO.setDoSignAssertions(spssoDescriptor.getWantAssertionsSigned());
     }
 
-    private void setDoValidateSignatureInRequests(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    private void setDoValidateSignatureInRequests(SPSSODescriptor spssoDescriptor,
+                                                  SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         samlssoServiceProviderDO.setDoValidateSignatureInRequests(spssoDescriptor.isAuthnRequestsSigned());
     }
 
-    private void setSingleLogoutServices(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    private void setSingleLogoutServices(SPSSODescriptor spssoDescriptor,
+                                         SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         List<SingleLogoutService> singleLogoutServices = spssoDescriptor.getSingleLogoutServices();
         if (singleLogoutServices != null && singleLogoutServices.size() > 0) {
             boolean foundSingleLogoutServicePostBinding = false;
             for (SingleLogoutService singleLogoutService : singleLogoutServices) {
                 if (singleLogoutService.getBinding().equals(SAMLConstants.SAML2_POST_BINDING_URI)) {
                     samlssoServiceProviderDO.setSloRequestURL(singleLogoutService.getLocation());
-                    samlssoServiceProviderDO.setSloResponseURL(singleLogoutService.getResponseLocation());//changed
+                    samlssoServiceProviderDO.setSloResponseURL(singleLogoutService.getResponseLocation());
                     foundSingleLogoutServicePostBinding = true;
                     break;
                 }
             }
             samlssoServiceProviderDO.setSloRequestURL(singleLogoutServices.get(0).getLocation());
-            samlssoServiceProviderDO.setSloResponseURL(singleLogoutServices.get(0).getResponseLocation());//chnaged
+            samlssoServiceProviderDO.setSloResponseURL(singleLogoutServices.get(0).getResponseLocation());
             samlssoServiceProviderDO.setDoSingleLogout(true);
         } else {
             samlssoServiceProviderDO.setDoSingleLogout(false);
         }
     }
 
-    private void setX509Certificate(EntityDescriptor entityDescriptor, SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    private void setX509Certificate(EntityDescriptor entityDescriptor, SPSSODescriptor spssoDescriptor,
+                                    SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         List<KeyDescriptor> descriptors = spssoDescriptor.getKeyDescriptors();
         if (descriptors != null && descriptors.size() > 0) {
             KeyDescriptor descriptor = descriptors.get(0);
@@ -149,11 +168,10 @@ public class Parser {
                 if (descriptor.getUse().toString().equals("SIGNING")) {
 
                     try {
-                        samlssoServiceProviderDO.setX509Certificate(org.opensaml.xmlsec.keyinfo.KeyInfoSupport.getCertificates(descriptor.getKeyInfo()).get(0));
+                        samlssoServiceProviderDO.setX509Certificate(org.opensaml.xmlsec.keyinfo.KeyInfoSupport.
+                                getCertificates(descriptor.getKeyInfo()).get(0));
                         samlssoServiceProviderDO.setCertAlias(entityDescriptor.getEntityID());
-                    } catch (java.security.cert.CertificateException ex) {
-                        log.error("Error While setting Certificate and alias", ex);
-                    } catch (java.lang.Exception ex) {
+                    } catch (Exception ex) {
                         log.error("Error While setting Certificate and alias", ex);
                     }
                 }
@@ -161,16 +179,20 @@ public class Parser {
         }
     }
 
-    private void setSigningAlgorithmUri(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    private void setSigningAlgorithmUri(SPSSODescriptor spssoDescriptor,
+                                        SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         samlssoServiceProviderDO.setSigningAlgorithmUri("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
     }
 
-    private void setDigestAlgorithmUri(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+    private void setDigestAlgorithmUri(SPSSODescriptor spssoDescriptor,
+                                       SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
+
         samlssoServiceProviderDO.setDigestAlgorithmUri("http://www.w3.org/2000/09/xmldsig#sha1");
     }
 
     private void setAttributeConsumingServiceIndex(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO
-            samlssoServiceProviderDO) throws InvalidMetadataException {
+            samlssoServiceProviderDO) {
 
         List<AttributeConsumingService> attributeConsumingServices = spssoDescriptor.getAttributeConsumingServices();
         if (attributeConsumingServices != null && attributeConsumingServices.size() > 0) {
@@ -185,14 +207,15 @@ public class Parser {
     }
 
     /**
-     * Convert metadata string to samlssoServiceProviderDO object
+     * Convert metadata string to a SAMLSSOServiceProviderDO object.
      *
-     * @param metadata ,samlssoServiceProviderDO
-     * @return samlssoServiceProviderDO
+     * @param metadata                 String which contains the metadata.
+     * @param samlssoServiceProviderDO SAMLSSOServiceProviderDO object which the extracted metadata is populated to.
+     * @return SAMLSSOServiceProviderDO object that is populated.
      */
+    public SAMLSSOServiceProviderDO parse(String metadata, SAMLSSOServiceProviderDO samlssoServiceProviderDO)
+            throws InvalidMetadataException {
 
-
-    public SAMLSSOServiceProviderDO parse(String metadata, SAMLSSOServiceProviderDO samlssoServiceProviderDO) throws InvalidMetadataException {
         EntityDescriptor entityDescriptor = this.generateMetadataObjectFromString(metadata);
         if (entityDescriptor != null) {
             this.setIssuer(entityDescriptor, samlssoServiceProviderDO);
@@ -213,59 +236,64 @@ public class Parser {
             spssoDescriptor = (SPSSODescriptor) roleDescriptor;
 
             this.setAssertionConsumerUrl(spssoDescriptor, samlssoServiceProviderDO);
-            //Response Signing Algorithm - not found
-            //Response Digest Algorithm - not found
-            //NameID format
+            // Response Signing Algorithm - not found.
+            // Response Digest Algorithm - not found.
+            // NameID format.
             this.setNameIDFormat(spssoDescriptor, samlssoServiceProviderDO);
-            //Enable Assertion Signing
+            // Enable Assertion Signing.
             this.setDoSignAssertions(spssoDescriptor, samlssoServiceProviderDO);
-            //Enable Signature Validation in Authentication Requests and Logout Requests
+            // Enable Signature Validation in Authentication Requests and Logout Requests.
             this.setDoValidateSignatureInRequests(spssoDescriptor, samlssoServiceProviderDO);
-            //Enable Assertion Encryption - not found
-            //Enable Single Logout
+            // Enable Assertion Encryption - not found.
+            // Enable Single Logout.
             this.setSingleLogoutServices(spssoDescriptor, samlssoServiceProviderDO);
-            //Enable Attribute Profile - no method found
-            //TODO: currently this is stored as a property in registry. need to add it to the metadata file
-            // Enable Audience Restriction - not found
-            // Enable Recipient Validation - not found
-            //Enable IdP Initiated SSO - not found
-            // Enable IdP Initiated SLO - not found
+            // Enable Attribute Profile - no method found.
+            // TODO: currently this is stored as a property in registry. need to add it to the metadata file.
+            // Enable Audience Restriction - not found.
+            // Enable Recipient Validation - not found.
+            // Enable IdP Initiated SSO - not found.
+            // Enable IdP Initiated SLO - not found.
             this.setClaims(spssoDescriptor, samlssoServiceProviderDO);
-            //setting response signing algorythm - Hardcoded
-            //not found in the the spec, no in the SPSSODescriptor
+            // Setting response signing algorithm - Hardcoded.
+            // Not found in the spec and not in the SPSSODescriptor.
             this.setSigningAlgorithmUri(spssoDescriptor, samlssoServiceProviderDO);
-            //setting response digest algorythm - Hardcoded
-            //not found in the the spec, no in the SPSSODescriptor
+            // Setting response digest algorithm - Hardcoded.
+            // Not found in the spec and not in the SPSSODescriptor.
             this.setDigestAlgorithmUri(spssoDescriptor, samlssoServiceProviderDO);
-            //set alias and certificate
+            // Set alias and certificate.
             this.setX509Certificate(entityDescriptor, spssoDescriptor, samlssoServiceProviderDO);
-            //set attribute consuming service index
+            // Set attribute consuming service index.
             this.setAttributeConsumingServiceIndex(spssoDescriptor, samlssoServiceProviderDO);
         }
         return samlssoServiceProviderDO;
     }
 
     /**
-     * Generate metadata object from string
+     * Generate a metadata object from a string.
      *
-     * @param metadataString
-     * @return samlssoServiceProviderDO
+     * @param metadataString String containing the metadata.
+     * @return EntityDescriptor The metadata object.
      */
     private EntityDescriptor generateMetadataObjectFromString(String metadataString) throws InvalidMetadataException {
-        EntityDescriptor entityDescriptor = null;
+
+        EntityDescriptor entityDescriptor;
         InputStream inputStream;
         try {
             doBootstrap();
             inputStream = new ByteArrayInputStream(metadataString.trim().getBytes(StandardCharsets.UTF_8));
             entityDescriptor = (EntityDescriptor) XMLObjectSupport.unmarshallFromInputStream(
                     XMLObjectProviderRegistrySupport.getParserPool(), inputStream);
-        } catch ( UnmarshallingException | XMLParserException e) {
+        } catch (UnmarshallingException | XMLParserException e) {
             throw new InvalidMetadataException("Error reading SAML Service Provider metadata xml.", e);
         }
         return entityDescriptor;
     }
 
+    /**
+     * Initializes the OpenSAML library.
+     */
     public static void doBootstrap() {
+
         if (!isBootStrapped) {
             try {
                 SAMLInitializer.doBootstrap();
