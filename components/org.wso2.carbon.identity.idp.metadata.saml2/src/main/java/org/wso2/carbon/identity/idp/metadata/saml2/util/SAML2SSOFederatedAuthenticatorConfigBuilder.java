@@ -62,16 +62,16 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
 
         if (entityDescriptor != null) {
             List<RoleDescriptor> roleDescriptors = entityDescriptor.getRoleDescriptors();
-            //assuming only one IDPSSO is inside the entitydescripter
+            // Assuming that only one IDPSSODescriptor is inside the EntityDescriptor.
             if (CollectionUtils.isNotEmpty(roleDescriptors)) {
-                RoleDescriptor roleDescriptor = roleDescriptors.get(0);
-                if (roleDescriptor != null) {
-                    IDPSSODescriptor idpssoDescriptor;
-                    try {
+                IDPSSODescriptor idpssoDescriptor = null;
+                for (RoleDescriptor roleDescriptor : roleDescriptors) {
+                    if (roleDescriptor instanceof IDPSSODescriptor) {
                         idpssoDescriptor = (IDPSSODescriptor) roleDescriptor;
-                    } catch (ClassCastException ex) {
-                        throw new IdentityApplicationManagementException("No IDP Descriptors found, invalid file content", ex);
+                        break;
                     }
+                }
+                if (idpssoDescriptor != null) {
                     Property properties[] = new Property[24];
 
                     Property property = new Property();
@@ -320,6 +320,8 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                             }
                         }
                     }
+                } else {
+                    throw new IdentityApplicationManagementException("No IDP Descriptors found, invalid file content.");
                 }
             } else {
                 throw new IdentityApplicationManagementException("No Role Descriptors found, invalid file content");
