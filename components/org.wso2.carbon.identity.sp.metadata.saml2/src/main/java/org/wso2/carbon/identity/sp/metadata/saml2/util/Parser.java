@@ -66,11 +66,13 @@ public class Parser {
             List<String> acs = new ArrayList<>();
             boolean foundAssertionConsumerUrl = false;
             for (AssertionConsumerService assertionConsumerService : assertionConsumerServices) {
-                acs.add(assertionConsumerService.getLocation());
-                if (assertionConsumerService.isDefault()) {
-                    samlssoServiceProviderDO.setDefaultAssertionConsumerUrl(assertionConsumerService.getLocation());//changed
-                    samlssoServiceProviderDO.setAssertionConsumerUrl(assertionConsumerService.getLocation());//changed
-                    foundAssertionConsumerUrl = true;
+                if (!acs.contains(assertionConsumerService.getLocation())) {
+                    acs.add(assertionConsumerService.getLocation());
+                    if (assertionConsumerService.isDefault()) {
+                        samlssoServiceProviderDO.setDefaultAssertionConsumerUrl(assertionConsumerService.getLocation());//changed
+                        samlssoServiceProviderDO.setAssertionConsumerUrl(assertionConsumerService.getLocation());//changed
+                        foundAssertionConsumerUrl = true;
+                    }
                 }
             }
             samlssoServiceProviderDO.setAssertionConsumerUrls(acs);
