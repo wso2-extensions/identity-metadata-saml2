@@ -115,10 +115,9 @@ public class SAMLMetadataConverter implements MetadataConverter {
             throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException {
 
         String metadata = "";
-        final String META_DATA_SAML = "meta_data_saml";
         for (Property property : properties) {
 
-            if (property != null && META_DATA_SAML.equals(property.getName())) {
+            if (property != null && IDPMetadataConstant.META_DATA_SAML.equals(property.getName())) {
                 metadata = property.getValue();
             }
         }

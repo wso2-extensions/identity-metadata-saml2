@@ -39,6 +39,9 @@ import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+/**
+ * Identity provider SAML component class.
+ */
 @Component(
         name = "identity.provider.saml.service.component",
         immediate = true)

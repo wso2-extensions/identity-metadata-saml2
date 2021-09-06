@@ -24,6 +24,9 @@ import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.ConfigurationContextService;
 
+/**
+ * Identity provider SAML component service holder class.
+ */
 public class IDPMetadataSAMLServiceComponentHolder {
 
     public static IDPMetadataSAMLServiceComponentHolder instance = new IDPMetadataSAMLServiceComponentHolder();

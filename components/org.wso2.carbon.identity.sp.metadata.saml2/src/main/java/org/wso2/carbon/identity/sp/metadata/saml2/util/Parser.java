@@ -55,7 +55,7 @@ public class Parser {
     private static final Log log = LogFactory.getLog(Parser.class);
 
     protected Registry registry = null;
-    private final String DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
+    private static final String DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
     private static boolean isBootStrapped = false;
 
     public Parser(Registry registry) {
