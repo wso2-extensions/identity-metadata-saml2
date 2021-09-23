@@ -199,20 +199,21 @@ public class Parser {
         if (entityDescriptor != null) {
             this.setIssuer(entityDescriptor, samlssoServiceProviderDO);
             List<RoleDescriptor> roleDescriptors = entityDescriptor.getRoleDescriptors();
-            //TODO: handle when multiple role descriptors are available
-            //assuming only one SPSSO is inside the entitydescripter
-            RoleDescriptor roleDescriptor;
-            SPSSODescriptor spssoDescriptor;
+            // Assuming that only one SPSSODescriptor is inside the EntityDescriptor.
+            SPSSODescriptor spssoDescriptor = null;
 
             if (CollectionUtils.isEmpty(roleDescriptors)) {
                 throw new InvalidMetadataException("Role descriptor not found.");
             }
-            roleDescriptor = roleDescriptors.get(0);
-
-            if (!(roleDescriptor instanceof SPSSODescriptor)) {
+            for (RoleDescriptor roleDescriptor : roleDescriptors) {
+                if (roleDescriptor instanceof SPSSODescriptor) {
+                    spssoDescriptor = (SPSSODescriptor) roleDescriptor;
+                    break;
+                }
+            }
+            if (spssoDescriptor == null) {
                 throw new InvalidMetadataException("Invalid role descriptor class found.");
             }
-            spssoDescriptor = (SPSSODescriptor) roleDescriptor;
 
             this.setAssertionConsumerUrl(spssoDescriptor, samlssoServiceProviderDO);
             //Response Signing Algorithm - not found
