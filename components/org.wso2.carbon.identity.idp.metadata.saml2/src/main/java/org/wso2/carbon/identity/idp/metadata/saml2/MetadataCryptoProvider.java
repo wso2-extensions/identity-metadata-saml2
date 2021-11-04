@@ -77,7 +77,8 @@ public class MetadataCryptoProvider implements CryptoProvider {
 
         // Remove namespace of Signature element
         try {
-            org.apache.xml.security.utils.ElementProxy.setDefaultPrefix(ConfigElements.XMLSIGNATURE_NS, "");
+            org.apache.xml.security.utils.ElementProxy.setDefaultPrefix(ConfigElements.XMLSIGNATURE_NS,
+                    ConfigElements.DEFAULT_XMLSIGNATURE_NS_PREFIX);
         } catch (XMLSecurityException e) {
             throw new MetadataException("Unable to set default prefix for signature element", e);
         }
