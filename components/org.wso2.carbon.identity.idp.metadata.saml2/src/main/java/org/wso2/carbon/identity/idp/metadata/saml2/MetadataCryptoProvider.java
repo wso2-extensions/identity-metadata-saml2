@@ -75,7 +75,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
             log.debug("Key Descriptors set for all the role descriptor types");
         }
 
-        // Remove namespace of Signature element
+        // Set signature namespace to the default value.
         try {
             org.apache.xml.security.utils.ElementProxy.setDefaultPrefix(ConfigElements.XMLSIGNATURE_NS,
                     ConfigElements.DEFAULT_XMLSIGNATURE_NS_PREFIX);
