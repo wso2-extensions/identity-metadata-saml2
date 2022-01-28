@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2.bean;
 
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityMessageContext;
@@ -22,29 +23,33 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Ide
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 
 /**
- * This class implements SAMLMetadataResponse and the corresponding builder
+ * This class implements SAMLMetadataResponse and the corresponding builder.
  */
 
 public class SAMLMetadataResponse extends IdentityResponse {
 
-
     private String metadata;
 
     protected SAMLMetadataResponse(IdentityResponseBuilder builder) {
-        super(builder);
 
+        super(builder);
         metadata = ((SAMLMetadataResponseBuilder) builder).metadata;
     }
 
 
     public String getMetadata() {
+
         return metadata;
     }
 
     public void setMetadata(String metadata) {
+
         this.metadata = metadata;
     }
 
+    /**
+     * Class which is responsible for building a SAML metadata response.
+     */
     public static class SAMLMetadataResponseBuilder extends IdentityResponseBuilder {
 
         private String metadata;
@@ -54,23 +59,24 @@ public class SAMLMetadataResponse extends IdentityResponse {
         }
 
         public SAMLMetadataResponseBuilder(IdentityMessageContext context) {
-            super(context);
 
+            super(context);
         }
 
         public String getMetadata() {
+
             return metadata;
         }
 
         public void setMetadata(String metadata) {
+
             this.metadata = metadata;
         }
 
         @Override
         public IdentityResponse build() {
+
             return new SAMLMetadataResponse(this);
         }
     }
-
-
 }

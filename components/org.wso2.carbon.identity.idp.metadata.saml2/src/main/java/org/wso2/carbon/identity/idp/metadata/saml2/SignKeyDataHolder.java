@@ -19,7 +19,6 @@
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
 import org.apache.commons.lang.StringUtils;
-import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.signature.XMLSignature;
@@ -30,11 +29,11 @@ import org.opensaml.security.x509.X509Credential;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.core.util.KeyStoreManager;
+import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
 import org.wso2.carbon.idp.mgt.MetadataException;
 import org.wso2.carbon.security.keystore.KeyStoreAdmin;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
-import javax.crypto.SecretKey;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,11 +50,11 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.crypto.SecretKey;
 
 /**
- * This class holds key configurations
+ * This class holds key configurations.
  */
-
 public class SignKeyDataHolder implements X509Credential {
 
     public static final String SECURITY_SAML_SIGN_KEY_STORE_LOCATION = "Security.SAMLSignKeyStore.Location";
@@ -74,9 +73,10 @@ public class SignKeyDataHolder implements X509Credential {
     private static final Log log = LogFactory.getLog(SignKeyDataHolder.class);
 
     /**
-     * Represent OpenSAML compatible certificate credential
+     * Represent OpenSAML compatible certificate credential.
      */
     public SignKeyDataHolder() throws MetadataException {
+
         int tenantID;
         String userTenantDomain;
 
@@ -105,13 +105,14 @@ public class SignKeyDataHolder implements X509Credential {
     }
 
     /**
-     * Set parameters needed for build Sign Key from the tenant KeyStore
+     * Set parameters needed for build Sign Key from the tenant KeyStore.
      *
-     * @param tenantID
-     * @param tenantDomain
-     * @throws Exception
+     * @param tenantID     ID of the tenant.
+     * @param tenantDomain Domain of the tenant.
+     * @throws Exception if there is an error while retrieving from the key store manager.
      */
     private void initializeKeyDataForTenant(int tenantID, String tenantDomain) throws Exception {
+
         if (log.isDebugEnabled()) {
             log.debug("Initializing Key Data for tenant: " + tenantDomain);
         }
@@ -135,11 +136,12 @@ public class SignKeyDataHolder implements X509Credential {
 
     /**
      * Set parameters needed for build Sign Key from the Sign KeyStore which is defined under Security.KeyStore in
-     * carbon.xml
+     * carbon.xml.
      *
-     * @throws Exception
+     * @throws Exception if the keyAlias is empty or if there is an error while retrieving through the key store admin.
      */
     private void initializeKeyDataForSuperTenantFromSystemKeyStore() throws Exception {
+
         if (log.isDebugEnabled()) {
             log.debug("Initializing Key Data for super tenant using system key store");
         }
@@ -165,11 +167,12 @@ public class SignKeyDataHolder implements X509Credential {
     }
 
     /**
-     * Check whether separate configurations for sign KeyStore available
+     * Check whether separate configurations for sign KeyStore available.
      *
      * @return true if necessary configurations are defined for sign KeyStore; false otherwise.
      */
     private boolean isSignKeyStoreConfigured() {
+
         String keyStoreLocation = ServerConfiguration.getInstance().getFirstProperty(
                 SECURITY_SAML_SIGN_KEY_STORE_LOCATION);
         String keyStoreType = ServerConfiguration.getInstance().getFirstProperty(
@@ -188,11 +191,12 @@ public class SignKeyDataHolder implements X509Credential {
 
     /**
      * Set parameters needed for build Sign Key from the Sign KeyStore which is defined under Security.SAMLSignKeyStore
-     * in carbon.xml
+     * in carbon.xml.
      *
-     * @throws MetadataException
+     * @throws MetadataException if there is an error while using the key store and certificates.
      */
     private void initializeKeyDataForSuperTenantFromSignKeyStore() throws MetadataException {
+
         if (log.isDebugEnabled()) {
             log.debug("Initializing Key Data for super tenant using separate sign key store");
         }
@@ -254,53 +258,63 @@ public class SignKeyDataHolder implements X509Credential {
         }
     }
 
-
     public Collection<X509CRL> getCRLs() {
+
         return null;
     }
 
     public X509Certificate getEntityCertificate() {
+
         return issuerCerts[0];
     }
 
     public Collection<X509Certificate> getEntityCertificateChain() {
+
         return Arrays.asList(issuerCerts);
     }
 
-    /***
+    /**
      * Get the credential context set.
+     *
      * @return This method is not supported so, the return is null.
      */
     public CredentialContextSet getCredentialContextSet() {
+
         return null;
     }
 
     public Class<? extends Credential> getCredentialType() {
+
         return null;
     }
 
     public String getEntityId() {
+
         return null;
     }
 
     public Collection<String> getKeyNames() {
+
         return null;
     }
 
     public PrivateKey getPrivateKey() {
+
         return issuerPrivateKey;
     }
 
     public PublicKey getPublicKey() {
+
         return issuerCerts[0].getPublicKey();
     }
 
     public SecretKey getSecretKey() {
+
         return null;
     }
 
     public UsageType getUsageType() {
+
         return null;
     }
-
 }

@@ -21,15 +21,18 @@ package org.wso2.carbon.identity.idp.metadata.saml2;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.wso2.carbon.idp.mgt.MetadataException;
 
+/**
+ * This class provides implementation details for custom CryptoProviders.
+ */
 public interface CryptoProvider {
 
     /**
      * Sign the base descriptor with the credential and also
      * sets the key info in each element.
      *
-     * @param baseDescriptor
-     * @throws org.wso2.carbon.idp.mgt.MetadataException
+     * @param baseDescriptor EntityDescriptor object.
+     * @throws MetadataException if there is an error while signing the metadata.
      */
-    public void signMetadata(EntityDescriptor baseDescriptor) throws MetadataException;
+    void signMetadata(EntityDescriptor baseDescriptor) throws MetadataException;
 
 }

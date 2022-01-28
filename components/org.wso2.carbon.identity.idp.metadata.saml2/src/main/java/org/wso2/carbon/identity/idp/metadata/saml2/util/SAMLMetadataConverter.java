@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.axiom.om.OMElement;
@@ -55,27 +56,25 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 /**
- * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config nad vise versa
+ * This class implements the SAML metadata functionality to convert string to FederatedAuthenticator config
+ * and vise versa.
  */
 public class SAMLMetadataConverter implements MetadataConverter {
 
     private static final Log log = LogFactory.getLog(SAMLMetadataConverter.class);
 
     /**
-     * Retrieves whether this property contains SAML Metadata     *
+     * Checks whether this property contains SAML Metadata.
      *
-     * @param property
-     * @return boolean     *
+     * @param property The property to be checked for SAML Metadata.
+     * @return boolean Whether that property contains SAML Metadata.
      */
     public boolean canHandle(Property property) {
 
         if (property != null) {
             String meta = property.getName();
             if (meta != null && meta.contains(IDPMetadataConstant.SAML)) {
-                if (property.getValue() != null && property.getValue().length() > 0) {
-                    return true;
-                }
-                return false;
+                return property.getValue() != null && property.getValue().length() > 0;
             } else {
                 return false;
             }
@@ -104,20 +103,21 @@ public class SAMLMetadataConverter implements MetadataConverter {
     }
 
     /**
-     * Returns a FederatedAuthenticatorConfigObject that is generated using metadata
+     * Returns a FederatedAuthenticatorConfigObject that is generated using metadata.
      *
-     * @param properties, builder
-     * @return FederatedAuthenticatorConfig
-     * @throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException
+     * @param properties Properties required to build the metadata.
+     * @param builder    StringBuilder that is used to consume metadata.
+     * @return FederatedAuthenticatorConfig containing the required metadata.
+     * @throws javax.xml.stream.XMLStreamException If there is an error while converting a string to an OMElement.
+     * @throws IdentityProviderManagementException If there is a problem in metadata.
      */
     public FederatedAuthenticatorConfig getFederatedAuthenticatorConfig(Property[] properties, StringBuilder builder)
             throws javax.xml.stream.XMLStreamException, IdentityProviderManagementException {
 
         String metadata = "";
-        final String META_DATA_SAML = "meta_data_saml";
         for (Property property : properties) {
 
-            if (property != null && META_DATA_SAML.equals(property.getName())) {
+            if (property != null && IDPMetadataConstant.META_DATA_SAML.equals(property.getName())) {
                 metadata = property.getValue();
             }
         }
@@ -190,22 +190,22 @@ public class SAMLMetadataConverter implements MetadataConverter {
         return null;
     }
 
-    private Node getX509Certificate(Element X509Data) {
+    private Node getX509Certificate(Element x509Data) {
 
-        if (X509Data.getElementsByTagName("X509Certificate").item(0) != null) {
-            return X509Data.getElementsByTagName("X509Certificate").item(0);
-        } else if (X509Data.getElementsByTagName("ds:X509Certificate").item(0) != null) {
-            return X509Data.getElementsByTagName("ds:X509Certificate").item(0);
+        if (x509Data.getElementsByTagName("X509Certificate").item(0) != null) {
+            return x509Data.getElementsByTagName("X509Certificate").item(0);
+        } else if (x509Data.getElementsByTagName("ds:X509Certificate").item(0) != null) {
+            return x509Data.getElementsByTagName("ds:X509Certificate").item(0);
         }
         return null;
     }
 
     /**
-     * If certificate is available, it's converted to PEM format
+     * If certificate is available, it's converted to PEM format.
      */
     private String configureCertificate(String metadataOriginal) throws IdentityProviderManagementException {
 
-        String metadata = "";
+        String metadata;
         DocumentBuilderFactory factory = IdentityUtil.getSecuredDocumentBuilderFactory();
         DocumentBuilder builder;
         Document document;
@@ -251,9 +251,9 @@ public class SAMLMetadataConverter implements MetadataConverter {
                                                     "CERTIFICATE-----\n";
                                         }
                                         this.getX509Certificate(
-                                                (Element) this.getX509Data((Element) this.getKeyInfoImpl(
-                                                        (Element) this.getKeyDescriptors((Element)
-                                                                this.getIDPSSODescriptor(document)).item(i))))
+                                                        (Element) this.getX509Data((Element) this.getKeyInfoImpl(
+                                                                (Element) this.getKeyDescriptors((Element)
+                                                                        this.getIDPSSODescriptor(document)).item(i))))
                                                 .setTextContent(cert);
                                     }
                                 }
@@ -296,17 +296,14 @@ public class SAMLMetadataConverter implements MetadataConverter {
 
     public boolean canHandle(FederatedAuthenticatorConfig federatedAuthenticatorConfig) {
 
-        if (federatedAuthenticatorConfig != null && federatedAuthenticatorConfig.getName()
-                .equals(IdentityApplicationConstants.Authenticator.SAML2SSO.NAME)) {
-            return true;
-        }
-        return false;
+        return federatedAuthenticatorConfig != null && federatedAuthenticatorConfig.getName()
+                .equals(IdentityApplicationConstants.Authenticator.SAML2SSO.NAME);
     }
 
     /**
-     * Deletes an IDP metadata registry component if exists
+     * Deletes an IDP metadata registry component if it exists.
      *
-     * @param tenantId Id of the tenant.
+     * @param tenantId ID of the tenant.
      * @param idPName  Name of the identity provider.
      * @throws IdentityProviderManagementException Error when deleting Identity Provider
      *                                             information from registry.
@@ -357,11 +354,13 @@ public class SAMLMetadataConverter implements MetadataConverter {
     }
 
     /**
-     * Updates an IDP metadata registry component
+     * Updates an IDP metadata registry component.
      *
-     * @param idpName , tennantId, metadata
+     * @param tenantId ID of the tenant.
+     * @param idpName  Name of the Identity Provider.
+     * @param metadata Metadata in the form of a String.
      * @throws IdentityProviderManagementException Error when deleting Identity Provider
-     *                                             information from registry
+     *                                             information from registry.
      */
     public void saveMetadataString(int tenantId, String idpName, String fedAuthName, String metadata)
             throws IdentityProviderManagementException {
@@ -430,5 +429,4 @@ public class SAMLMetadataConverter implements MetadataConverter {
                     "Error while setting a registry object in IdentityProviderManager", e);
         }
     }
-
 }

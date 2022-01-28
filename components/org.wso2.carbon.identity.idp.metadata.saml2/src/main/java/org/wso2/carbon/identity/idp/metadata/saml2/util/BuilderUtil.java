@@ -20,23 +20,24 @@ package org.wso2.carbon.identity.idp.metadata.saml2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.wso2.carbon.identity.saml.common.util.SAMLInitializer;
 import org.wso2.carbon.idp.mgt.MetadataException;
+
 import javax.xml.namespace.QName;
 
-
 /**
- * Provides functionality to create a a SAML object of a given type
-* */
+ * Provides functionality to create a SAML object of a given type.
+ */
 public class BuilderUtil {
 
     private static boolean isBootStrapped = false;
     private static final Log log = LogFactory.getLog(BuilderUtil.class);
 
     public static void doBootstrap() {
+
         if (!isBootStrapped) {
             try {
                 SAMLInitializer.doBootstrap();
@@ -58,12 +59,7 @@ public class BuilderUtil {
         }
 
         QName qName = new QName(namespaceURI, localName, namespacePrefix);
-        
-        T object = (T) builderFactory.getBuilder(qName).buildObject(qName);
 
-        return object;
+        return (T) builderFactory.getBuilder(qName).buildObject(qName);
     }
-    
-
-
 }

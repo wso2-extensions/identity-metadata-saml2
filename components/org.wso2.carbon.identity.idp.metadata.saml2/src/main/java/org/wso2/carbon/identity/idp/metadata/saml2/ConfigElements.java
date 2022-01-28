@@ -19,9 +19,8 @@
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
 /**
- * Defines SAML specific String constants
+ * Defines SAML specific String constants.
  */
-
 public class ConfigElements {
 
     public static final String ENTITY_DESCRIPTOR = "EntityDescriptor";

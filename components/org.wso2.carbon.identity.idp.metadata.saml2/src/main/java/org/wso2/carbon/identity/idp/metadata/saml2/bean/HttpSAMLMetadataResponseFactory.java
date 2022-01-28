@@ -27,24 +27,23 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Ide
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class implements functionality to build a HTTPIdentityResponse
+ * This class implements functionality to build a HTTPIdentityResponse.
  */
-
 public class HttpSAMLMetadataResponseFactory extends HttpIdentityResponseFactory {
 
     private static final Log log = LogFactory.getLog(HttpSAMLMetadataResponseFactory.class);
 
     @Override
     public String getName() {
+
         return "HttpSAMLMetadataResponseFactory";
     }
 
     @Override
     public boolean canHandle(IdentityResponse identityResponse) {
-        if (identityResponse instanceof SAMLMetadataResponse || identityResponse instanceof SAMLMetadataErrorResponse) {
-            return true;
-        }
-        return false;
+
+        return identityResponse instanceof SAMLMetadataResponse ||
+                identityResponse instanceof SAMLMetadataErrorResponse;
     }
 
     @Override
@@ -58,14 +57,13 @@ public class HttpSAMLMetadataResponseFactory extends HttpIdentityResponseFactory
     }
 
     private HttpIdentityResponse.HttpIdentityResponseBuilder sendResponse(IdentityResponse identityResponse) {
+
         SAMLMetadataResponse metadataResponse = ((SAMLMetadataResponse) identityResponse);
         HttpIdentityResponse.HttpIdentityResponseBuilder builder = new HttpIdentityResponse
                 .HttpIdentityResponseBuilder();
 
         String metadata = metadataResponse.getMetadata();
-        StringBuilder out = new StringBuilder();
-        out.append(metadata);
-        builder.setBody(out.toString());
+        builder.setBody(metadata);
         builder.setContentType("application/xml");
         builder.setStatusCode(HttpServletResponse.SC_OK);
         return builder;
@@ -77,14 +75,13 @@ public class HttpSAMLMetadataResponseFactory extends HttpIdentityResponseFactory
     }
 
     private HttpIdentityResponse.HttpIdentityResponseBuilder sendErrorResponse(IdentityResponse identityResponse) {
+
         SAMLMetadataErrorResponse errorResponse = ((SAMLMetadataErrorResponse) identityResponse);
         HttpIdentityResponse.HttpIdentityResponseBuilder builder = new HttpIdentityResponse
                 .HttpIdentityResponseBuilder();
 
         String message = errorResponse.getMessage();
-        StringBuilder out = new StringBuilder();
-        out.append(message);
-        builder.setBody(out.toString());
+        builder.setBody(message);
         builder.setContentType("text/html");
         builder.setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return builder;

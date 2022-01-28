@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.identity.sp.metadata.saml2.exception;
 
+/**
+ * This class is used to denote exceptions that are thrown when the SP metadata is incorrect.
+ */
 public class InvalidMetadataException extends Exception {
 
     public InvalidMetadataException(String message) {
@@ -27,6 +30,5 @@ public class InvalidMetadataException extends Exception {
     public InvalidMetadataException(String message, Throwable cause) {
         super(message, cause);
     }
-
 
 }

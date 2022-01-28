@@ -15,19 +15,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
 /**
- * This class defines SAML specific namespace String constants
+ * This class defines SAML specific namespace String constants.
  */
-
 public final class IDPMetadataConstant {
 
-    public static String HTTP_BINDING_REDIRECT_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
-    public static String HTTP_BINDING_POST_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
-    public static String NAME_FORMAT_ID_SAML = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
-    public static String SUPPORTED_PROTOCOL_SAML2 = "urn:oasis:names:tc:SAML:2.0:protocol";
-    public static String IDP_METADATA_SAML2 = "urn:oasis:names:tc:SAML:2.0:metadata";
-    public static String SAML = "saml";
-    public static String SOAP_BINDING_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
+    public static final String HTTP_BINDING_REDIRECT_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
+    public static final String HTTP_BINDING_POST_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
+    public static final String NAME_FORMAT_ID_SAML = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+    public static final String SUPPORTED_PROTOCOL_SAML2 = "urn:oasis:names:tc:SAML:2.0:protocol";
+    public static final String IDP_METADATA_SAML2 = "urn:oasis:names:tc:SAML:2.0:metadata";
+    public static final String SAML = "saml";
+    public static final String SOAP_BINDING_SAML2 = "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
+    public static final String META_DATA_SAML = "meta_data_saml";
 }

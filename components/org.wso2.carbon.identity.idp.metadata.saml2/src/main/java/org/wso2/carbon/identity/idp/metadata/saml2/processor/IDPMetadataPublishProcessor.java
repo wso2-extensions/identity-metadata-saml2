@@ -15,9 +15,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.carbon.identity.idp.metadata.saml2.processor;
 
-import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.application.authentication.framework.exception.FrameworkException;
@@ -27,59 +27,62 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Ide
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityResponse;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataErrorResponse;
+import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataResponse;
 import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
 import org.wso2.carbon.idp.mgt.IdentityProviderManager;
 
-
 /**
- * This class implements functionality to set metadata content to SAML2MetadataResponseBuilder
+ * This class implements functionality to set metadata content to SAML2MetadataResponseBuilder.
  */
-
 public class IDPMetadataPublishProcessor extends IdentityProcessor {
+
     private static final Log log = LogFactory.getLog(IDPMetadataPublishProcessor.class);
     private String relyingParty;
 
     @Override
     public String getName() {
+
         return "IDPMetadataPublishProcessor";
     }
 
     @Override
     public int getPriority() {
+
         return 2;
     }
 
     @Override
     public String getCallbackPath(IdentityMessageContext context) {
+
         return IdentityUtil.getServerURL("identity", false, false);
     }
 
     @Override
     public String getRelyingPartyId() {
+
         return this.relyingParty;
     }
 
     @Override
     public String getRelyingPartyId(IdentityMessageContext identityMessageContext) {
+
         return getRelyingPartyId();
     }
 
     @Override
     public boolean canHandle(IdentityRequest identityRequest) {
-        if (identityRequest.getRequestURI().contains("/metadata/saml2")) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return identityRequest.getRequestURI().contains("/metadata/saml2");
     }
 
     public IdentityResponse.IdentityResponseBuilder process(IdentityRequest identityRequest) throws
             FrameworkException {
 
         String tenantDomain = identityRequest.getTenantDomain();
-        IdentityProviderManager identityProviderManager = (IdentityProviderManager) IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
-        String metadata = null;
+        IdentityProviderManager identityProviderManager = (IdentityProviderManager)
+                IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
+        String metadata;
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Starting to retrieve resident IdP metadata for tenant: " + tenantDomain);
@@ -88,13 +91,15 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
         } catch (IdentityProviderManagementException e) {
             log.error("Internal Server Error", e);
             IdentityMessageContext context = new IdentityMessageContext(identityRequest);
-            SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder responseBuilder = new SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder(context);
+            SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder responseBuilder =
+                    new SAMLMetadataErrorResponse.SAMLMetadataErrorResponseBuilder(context);
             responseBuilder.setMessage("Internal Server Error");
             return responseBuilder;
 
         }
         IdentityMessageContext context = new IdentityMessageContext(identityRequest);
-        SAMLMetadataResponse.SAMLMetadataResponseBuilder responseBuilder = new SAMLMetadataResponse.SAMLMetadataResponseBuilder(context);
+        SAMLMetadataResponse.SAMLMetadataResponseBuilder responseBuilder =
+                new SAMLMetadataResponse.SAMLMetadataResponseBuilder(context);
         responseBuilder.setMetadata(metadata);
         return responseBuilder;
 
