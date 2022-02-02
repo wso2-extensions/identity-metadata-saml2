@@ -32,4 +32,5 @@ public class ConfigElements {
     public static final String XMLSIGNATURE_NS = "http://www.w3.org/2000/09/xmldsig#";
     public static final String FED_METADATA_NS = "urn:oasis:names:tc:SAML:2.0:metadata";
     public static final String ARTIFACTRESSERVICE_DESCRIPTOR = "ArtifactResolutionService";
+    public static final String DEFAULT_XMLSIGNATURE_NS_PREFIX = "ds";
 }

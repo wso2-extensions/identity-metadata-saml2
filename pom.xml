@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
     <artifactId>identity-metadata-saml2</artifactId>
-    <version>1.4.13-SNAPSHOT</version>
+    <version>1.4.14-SNAPSHOT</version>
     <name>WSO2 Carbon SAML2 Metadata</name>
     <packaging>pom</packaging>
     <url>http://wso2.org</url>
@@ -259,7 +259,7 @@
         <carbon.kernel.registry.imp.pkg.version>[1.0.1, 2.0.0)</carbon.kernel.registry.imp.pkg.version>
         <carbon.kernel.version>4.6.0</carbon.kernel.version>
         <javax.xml.range>[0.0.0,1.0.0)</javax.xml.range>
-        <org.apache.xml.security.range>[0.0.0,2.0.0)</org.apache.xml.security.range>
+        <org.apache.xml.security.range>[0.0.0,2.2.0)</org.apache.xml.security.range>
         <javax.crypto.range>[0.0.0,1.0.0)</javax.crypto.range>
         <org.opensaml.version>3.3.1.wso2v1</org.opensaml.version>
         <org.wso2.dom.version.range>[0.0.0,1.0.0)</org.wso2.dom.version.range>
