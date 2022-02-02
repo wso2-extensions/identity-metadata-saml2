@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
     <artifactId>identity-metadata-saml2</artifactId>
-    <version>1.4.13-SNAPSHOT</version>
+    <version>1.4.14-SNAPSHOT</version>
     <name>WSO2 Carbon SAML2 Metadata</name>
     <packaging>pom</packaging>
     <url>http://wso2.org</url>
