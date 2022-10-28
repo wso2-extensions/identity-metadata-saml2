@@ -35,7 +35,7 @@
         <developerConnection>scm:git:https://github.com/wso2-extensions/identity-metadata-saml2.git
         </developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/iidentity-metadata-saml2.git</connection>
-        <tag>v1.5.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
