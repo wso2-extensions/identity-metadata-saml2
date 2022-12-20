@@ -41,6 +41,7 @@ import org.wso2.carbon.identity.application.common.util.IdentityApplicationConst
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -317,6 +318,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                     federatedAuthenticatorConfig.setProperties(properties);
 
                     //set certificates
+                    StringBuilder certs = new StringBuilder();
                     if (CollectionUtils.isNotEmpty(descriptors)) {
                         for (KeyDescriptor descriptor : descriptors) {
                             if (descriptor != null) {
@@ -348,11 +350,7 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                                                                                 get(k).getX509Certificates().get(y).
                                                                                 getValue();
 
-                                                                        builder.append(
-                                                                                org.apache.axiom.om.util.Base64.encode(
-                                                                                        cert.getBytes())
-                                                                        );
-                                                                        return federatedAuthenticatorConfig;
+                                                                        certs.append(cert);
                                                                     }
                                                                 }
                                                             }
@@ -370,6 +368,8 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                             }
                         }
                     }
+                    builder.append(Base64.getEncoder().
+                            encodeToString(certs.toString().getBytes(StandardCharsets.UTF_8)));
                 } else {
                     throw new IdentityApplicationManagementException("No IDP Descriptors found, invalid file content.");
                 }
