@@ -136,7 +136,8 @@
                             org.opensaml.security.credential,
                             org.opensaml.xmlsec.signature,
                             org.opensaml.xmlsec.config,
-                            org.wso2.carbon.identity.core.model,
+                            org.wso2.carbon.identity.core.model;
+                            version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.registry.core,
                             org.wso2.carbon.identity.saml.common.util.*; version="${saml.common.util.version.range}",
                         </Import-Package>

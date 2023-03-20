@@ -111,8 +111,10 @@
                         <Import-Package>
                             javax.servlet.http,
                             org.osgi.service.http,
-                            org.wso2.carbon.identity.application.authentication.framework.exception,
-                            org.wso2.carbon.identity.application.authentication.framework.inbound,
+                            org.wso2.carbon.identity.application.authentication.framework.exception;
+                            version="${carbon.identity.package.import.version.range}",
+                            org.wso2.carbon.identity.application.authentication.framework.inbound;
+                            version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.utils,
                             org.wso2.carbon.identity.core; version="${carbon.identity.package.import.version.range}",
                             javax.xml.parsers ; version="${javax.xml.range}",

@@ -161,7 +161,7 @@
 
     <properties>
         <org.wso2.carbon.identity.framework.version>5.16.56</org.wso2.carbon.identity.framework.version>
-        <carbon.identity.package.import.version.range>[5.15.0, 6.0.0)</carbon.identity.package.import.version.range>
+        <carbon.identity.package.import.version.range>[5.15.0, 7.0.0)</carbon.identity.package.import.version.range>
 
         <commons.collections.version>3.2.0.wso2v1</commons.collections.version>
         <httpcomponents-httpclient.wso2.version>4.3.6.wso2v2</httpcomponents-httpclient.wso2.version>
