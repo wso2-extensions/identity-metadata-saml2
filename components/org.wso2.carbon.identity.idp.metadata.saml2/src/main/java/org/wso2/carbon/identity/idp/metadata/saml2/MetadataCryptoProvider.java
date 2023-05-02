@@ -180,7 +180,7 @@ public class MetadataCryptoProvider implements CryptoProvider {
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qname);
         Signature signature = builder.buildObject(qname);
         signature.setSigningCredential(credential);
-        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
+        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
         signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
         baseDescriptor.setSignature(signature);
         return signature;

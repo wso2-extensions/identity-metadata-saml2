@@ -184,13 +184,13 @@ public class Parser {
     private void setSigningAlgorithmUri(SPSSODescriptor spssoDescriptor,
                                         SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
 
-        samlssoServiceProviderDO.setSigningAlgorithmUri("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+        samlssoServiceProviderDO.setSigningAlgorithmUri("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
     }
 
     private void setDigestAlgorithmUri(SPSSODescriptor spssoDescriptor,
                                        SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
 
-        samlssoServiceProviderDO.setDigestAlgorithmUri("http://www.w3.org/2000/09/xmldsig#sha1");
+        samlssoServiceProviderDO.setDigestAlgorithmUri("http://www.w3.org/2001/04/xmlenc#sha256");
     }
 
     private void setAttributeConsumingServiceIndex(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO
