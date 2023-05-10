@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.sp.metadata.saml2.util;
 
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.opensaml.core.config.InitializationException;
@@ -36,7 +37,10 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
+import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
+import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
+import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.saml.common.util.SAMLInitializer;
 import org.wso2.carbon.identity.sp.metadata.saml2.exception.InvalidMetadataException;
 import org.wso2.carbon.registry.core.Registry;
@@ -184,13 +188,29 @@ public class Parser {
     private void setSigningAlgorithmUri(SPSSODescriptor spssoDescriptor,
                                         SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
 
-        samlssoServiceProviderDO.setSigningAlgorithmUri("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+        String signatureAlgorithm;
+        if (StringUtils.isNotBlank(IdentityUtil.getProperty(IdentityConstants.ServerConfig
+                .SAML_METADATA_SP_SIGNATURE_ALGO_URI))) {
+            signatureAlgorithm =
+                    IdentityUtil.getProperty(IdentityConstants.ServerConfig.SAML_METADATA_SP_SIGNATURE_ALGO_URI).trim();
+        } else {
+            signatureAlgorithm = IdentityApplicationConstants.XML.SignatureAlgorithmURI.RSA_SHA256;
+        }
+        samlssoServiceProviderDO.setSigningAlgorithmUri(signatureAlgorithm);
     }
 
     private void setDigestAlgorithmUri(SPSSODescriptor spssoDescriptor,
                                        SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
 
-        samlssoServiceProviderDO.setDigestAlgorithmUri("http://www.w3.org/2001/04/xmlenc#sha256");
+        String digestAlgorithm;
+        if (StringUtils.isNotBlank(IdentityUtil.getProperty(IdentityConstants.ServerConfig
+                .SAML_METADATA_SP_DIGEST_ALGO_URI))) {
+            digestAlgorithm =
+                    IdentityUtil.getProperty(IdentityConstants.ServerConfig.SAML_METADATA_SP_DIGEST_ALGO_URI).trim();
+        } else {
+            digestAlgorithm = IdentityApplicationConstants.XML.DigestAlgorithmURI.SHA256;
+        }
+        samlssoServiceProviderDO.setDigestAlgorithmUri(digestAlgorithm);
     }
 
     private void setAttributeConsumingServiceIndex(SPSSODescriptor spssoDescriptor, SAMLSSOServiceProviderDO
