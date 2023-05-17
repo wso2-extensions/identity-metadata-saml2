@@ -20,7 +20,6 @@ package org.wso2.carbon.identity.sp.metadata.saml2.util;
 
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.opensaml.core.config.InitializationException;
@@ -189,12 +188,11 @@ public class Parser {
                                         SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
 
         String signatureAlgorithm;
-        if (StringUtils.isNotBlank(IdentityUtil.getProperty(IdentityConstants.ServerConfig
-                .SAML_METADATA_SP_SIGNATURE_ALGO_URI))) {
-            signatureAlgorithm =
-                    IdentityUtil.getProperty(IdentityConstants.ServerConfig.SAML_METADATA_SP_SIGNATURE_ALGO_URI).trim();
-        } else {
+        if (Boolean.parseBoolean(IdentityUtil.getProperty(IdentityConstants.ServerConfig
+                .SAML_METADATA_SP_ENABLE_SHA256_ALGO))) {
             signatureAlgorithm = IdentityApplicationConstants.XML.SignatureAlgorithmURI.RSA_SHA256;
+        } else {
+            signatureAlgorithm = IdentityApplicationConstants.XML.SignatureAlgorithmURI.RSA_SHA1;
         }
         samlssoServiceProviderDO.setSigningAlgorithmUri(signatureAlgorithm);
     }
@@ -203,12 +201,11 @@ public class Parser {
                                        SAMLSSOServiceProviderDO samlssoServiceProviderDO) {
 
         String digestAlgorithm;
-        if (StringUtils.isNotBlank(IdentityUtil.getProperty(IdentityConstants.ServerConfig
-                .SAML_METADATA_SP_DIGEST_ALGO_URI))) {
-            digestAlgorithm =
-                    IdentityUtil.getProperty(IdentityConstants.ServerConfig.SAML_METADATA_SP_DIGEST_ALGO_URI).trim();
-        } else {
+        if (Boolean.parseBoolean(IdentityUtil.getProperty(IdentityConstants.ServerConfig
+                .SAML_METADATA_SP_ENABLE_SHA256_ALGO))) {
             digestAlgorithm = IdentityApplicationConstants.XML.DigestAlgorithmURI.SHA256;
+        } else {
+            digestAlgorithm = IdentityApplicationConstants.XML.DigestAlgorithmURI.SHA1;
         }
         samlssoServiceProviderDO.setDigestAlgorithmUri(digestAlgorithm);
     }
