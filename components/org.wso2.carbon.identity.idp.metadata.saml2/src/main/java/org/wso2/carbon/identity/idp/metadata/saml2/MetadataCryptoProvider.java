@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.identity.idp.metadata.saml2;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.exceptions.XMLSecurityException;
@@ -183,13 +182,11 @@ public class MetadataCryptoProvider implements CryptoProvider {
         Signature signature = builder.buildObject(qname);
         signature.setSigningCredential(credential);
         String signatureAlgorithm;
-        if (StringUtils.isNotBlank(IdentityUtil.getProperty(IdentityConstants.ServerConfig
-                .SAML_METADATA_IDP_SIGNATURE_ALGO_URI))) {
-            signatureAlgorithm =
-                    IdentityUtil.getProperty(IdentityConstants.ServerConfig
-                            .SAML_METADATA_IDP_SIGNATURE_ALGO_URI).trim();
-        } else {
+        if (Boolean.parseBoolean(IdentityUtil.getProperty(IdentityConstants.ServerConfig
+                .SAML_METADATA_IDP_ENABLE_SHA256_ALGO))) {
             signatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
+        } else {
+            signatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1;
         }
         signature.setSignatureAlgorithm(signatureAlgorithm);
         signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
