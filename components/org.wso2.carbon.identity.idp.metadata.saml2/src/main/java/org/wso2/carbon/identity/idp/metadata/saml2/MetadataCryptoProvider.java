@@ -36,6 +36,7 @@ import org.opensaml.xmlsec.signature.X509Certificate;
 import org.opensaml.xmlsec.signature.X509Data;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.w3c.dom.Document;
+import org.wso2.carbon.identity.base.IdentityConstants;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.BuilderUtil;
 import org.wso2.carbon.idp.mgt.MetadataException;
@@ -180,7 +181,14 @@ public class MetadataCryptoProvider implements CryptoProvider {
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qname);
         Signature signature = builder.buildObject(qname);
         signature.setSigningCredential(credential);
-        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
+        String signatureAlgorithm;
+        if (Boolean.parseBoolean(IdentityUtil.getProperty(IdentityConstants.ServerConfig
+                .SAML_METADATA_IDP_ENABLE_SHA256_ALGO))) {
+            signatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
+        } else {
+            signatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1;
+        }
+        signature.setSignatureAlgorithm(signatureAlgorithm);
         signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
         baseDescriptor.setSignature(signature);
         return signature;
