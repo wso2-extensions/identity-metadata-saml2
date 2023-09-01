@@ -91,9 +91,9 @@
                 <version>${org.wso2.carbon.identity.framework.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.security.mgt</groupId>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
                 <artifactId>org.wso2.carbon.security.mgt</artifactId>
-                <version>${carbon.security.mgt.version}</version>
+                <version>${org.wso2.carbon.identity.framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
@@ -162,8 +162,6 @@
     <properties>
         <org.wso2.carbon.identity.framework.version>5.25.210</org.wso2.carbon.identity.framework.version>
         <carbon.identity.package.import.version.range>[5.15.0, 7.0.0)</carbon.identity.package.import.version.range>
-        <carbon.security.mgt.version.range>[1.0.0, 2.0.0)</carbon.security.mgt.version.range>
-        <carbon.security.mgt.version>1.0.0</carbon.security.mgt.version>
 
         <commons.collections.version>3.2.0.wso2v1</commons.collections.version>
         <httpcomponents-httpclient.wso2.version>4.3.6.wso2v2</httpcomponents-httpclient.wso2.version>
@@ -299,8 +297,8 @@
                 <inherited>true</inherited>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
