@@ -72,20 +72,6 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
-            <artifactId>org.wso2.carbon.security.mgt</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.opensaml</groupId>
-                    <artifactId>opensaml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.opensaml</groupId>
-                    <artifactId>opensaml1</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.identity.framework</groupId>
             <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
         </dependency>
         <dependency>
@@ -152,6 +138,7 @@
                             org.w3c.dom; version="${org.wso2.dom.version.range}",
                             org.wso2.carbon.base; version="${carbon.base.imp.pkg.version.range}",
                             org.wso2.carbon.context; version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.core.keystore.*;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.core.util;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.identity.application.common;
                             version="${carbon.identity.package.import.version.range}",
@@ -166,7 +153,6 @@
                             org.wso2.carbon.idp.mgt.util; version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.registry.core.service;version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.core.session;version="${carbon.kernel.registry.imp.pkg.version}",
-                            org.wso2.carbon.security.keystore;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.user.core.service; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.utils.multitenancy;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.registry.core; version="${carbon.kernel.registry.imp.pkg.version}",

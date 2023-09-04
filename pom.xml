@@ -91,11 +91,6 @@
                 <version>${org.wso2.carbon.identity.framework.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.identity.framework</groupId>
-                <artifactId>org.wso2.carbon.security.mgt</artifactId>
-                <version>${org.wso2.carbon.identity.framework.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
                 <artifactId>org.wso2.carbon.identity.metadata.saml2</artifactId>
                 <version>${project.version}</version>

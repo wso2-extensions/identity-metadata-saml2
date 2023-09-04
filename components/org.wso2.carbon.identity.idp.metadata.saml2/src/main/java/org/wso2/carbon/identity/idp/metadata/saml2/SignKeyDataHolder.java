@@ -28,10 +28,9 @@ import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.x509.X509Credential;
 import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.core.keystore.KeyStoreAdmin;
 import org.wso2.carbon.core.util.KeyStoreManager;
-import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
 import org.wso2.carbon.idp.mgt.MetadataException;
-import org.wso2.carbon.security.keystore.KeyStoreAdmin;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.io.FileInputStream;
@@ -151,8 +150,7 @@ public class SignKeyDataHolder implements X509Credential {
             throw new MetadataException("Invalid file configurations. The key alias is not found.");
         }
 
-        KeyStoreAdmin keyAdmin = new KeyStoreAdmin(MultitenantConstants.SUPER_TENANT_ID,
-                IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry());
+        KeyStoreAdmin keyAdmin = new KeyStoreAdmin(MultitenantConstants.SUPER_TENANT_ID);
         KeyStoreManager keyMan = KeyStoreManager.getInstance(MultitenantConstants.SUPER_TENANT_ID);
         issuerPrivateKey = (PrivateKey) keyAdmin.getPrivateKey(keyAlias, true);
 
