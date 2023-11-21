@@ -83,7 +83,6 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
     public IdentityResponse.IdentityResponseBuilder process(IdentityRequest identityRequest) throws
             FrameworkException {
 
-
         String tenantDomain = identityRequest.getTenantDomain();
         try {
             if (OrganizationManagementUtil.isOrganization(tenantDomain)) {
@@ -132,7 +131,7 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
                     .resolveTenantDomain(rootOrganizationId);
         } catch (OrganizationManagementException e) {
             log.error("Error while resolving the root tenant domain of the tenant: " + tenantDomain, e);
-            return StringUtils.EMPTY;
+            return tenantDomain;
         }
     }
 }
