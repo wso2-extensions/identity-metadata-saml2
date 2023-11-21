@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.identity.idp.metadata.saml2.processor;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
