@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.idp.metadata.saml2.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.application.authentication.framework.exception.FrameworkException;
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityMessageContext;
 import org.wso2.carbon.identity.application.authentication.framework.inbound.IdentityProcessor;
@@ -29,6 +30,8 @@ import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataErrorResponse;
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.SAMLMetadataResponse;
 import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
+import org.wso2.carbon.identity.organization.management.service.exception.OrganizationManagementException;
+import org.wso2.carbon.identity.organization.management.service.util.OrganizationManagementUtil;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
 import org.wso2.carbon.idp.mgt.IdentityProviderManager;
 
@@ -80,6 +83,13 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
             FrameworkException {
 
         String tenantDomain = identityRequest.getTenantDomain();
+        try {
+            if (OrganizationManagementUtil.isOrganization(tenantDomain)) {
+                tenantDomain = resolveRootTenantDomain(tenantDomain);
+            }
+        } catch (OrganizationManagementException e) {
+            log.error("Error while checking the tenant: " + tenantDomain + " is an organization.", e);
+        }
         IdentityProviderManager identityProviderManager = (IdentityProviderManager)
                 IDPMetadataSAMLServiceComponentHolder.getInstance().getIdpManager();
         String metadata;
@@ -87,6 +97,8 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
             if (log.isDebugEnabled()) {
                 log.debug("Starting to retrieve resident IdP metadata for tenant: " + tenantDomain);
             }
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain, true);
             metadata = identityProviderManager.getResidentIDPMetadata(tenantDomain);
         } catch (IdentityProviderManagementException e) {
             log.error("Internal Server Error", e);
@@ -96,6 +108,8 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
             responseBuilder.setMessage("Internal Server Error");
             return responseBuilder;
 
+        } finally {
+            PrivilegedCarbonContext.endTenantFlow();
         }
         IdentityMessageContext context = new IdentityMessageContext(identityRequest);
         SAMLMetadataResponse.SAMLMetadataResponseBuilder responseBuilder =
@@ -103,5 +117,20 @@ public class IDPMetadataPublishProcessor extends IdentityProcessor {
         responseBuilder.setMetadata(metadata);
         return responseBuilder;
 
+    }
+
+    private String resolveRootTenantDomain(String tenantDomain) {
+
+        try {
+            String organizationId = IDPMetadataSAMLServiceComponentHolder.getInstance().getOrganizationManager()
+                    .resolveOrganizationId(tenantDomain);
+            String rootOrganizationId = IDPMetadataSAMLServiceComponentHolder.getInstance().getOrganizationManager()
+                    .getPrimaryOrganizationId(organizationId);
+            return IDPMetadataSAMLServiceComponentHolder.getInstance().getOrganizationManager()
+                    .resolveTenantDomain(rootOrganizationId);
+        } catch (OrganizationManagementException e) {
+            log.error("Error while resolving the root tenant domain of the tenant: " + tenantDomain, e);
+            return tenantDomain;
+        }
     }
 }

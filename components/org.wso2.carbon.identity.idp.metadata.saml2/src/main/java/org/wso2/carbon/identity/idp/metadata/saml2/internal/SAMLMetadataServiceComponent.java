@@ -33,6 +33,7 @@ import org.wso2.carbon.identity.application.authentication.framework.inbound.Ide
 import org.wso2.carbon.identity.idp.metadata.saml2.bean.HttpSAMLMetadataResponseFactory;
 import org.wso2.carbon.identity.idp.metadata.saml2.processor.IDPMetadataPublishProcessor;
 import org.wso2.carbon.identity.idp.metadata.saml2.util.SAMLMetadataConverter;
+import org.wso2.carbon.identity.organization.management.service.OrganizationManager;
 import org.wso2.carbon.idp.mgt.IdpManager;
 import org.wso2.carbon.idp.mgt.util.MetadataConverter;
 import org.wso2.carbon.registry.core.service.RegistryService;
@@ -170,6 +171,21 @@ public class SAMLMetadataServiceComponent {
     protected void setIdpManager(IdpManager idpManager) {
 
         IDPMetadataSAMLServiceComponentHolder.getInstance().setIdpManager(idpManager);
+    }
+
+    @Reference(name = "identity.organization.management.component",
+            service = OrganizationManager.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetOrganizationManager")
+    protected void setOrganizationManager(OrganizationManager organizationManager) {
+
+        IDPMetadataSAMLServiceComponentHolder.getInstance().setOrganizationManager(organizationManager);
+    }
+
+    protected void unsetOrganizationManager(OrganizationManager organizationManager) {
+
+        IDPMetadataSAMLServiceComponentHolder.getInstance().setOrganizationManager(null);
     }
 }
 
