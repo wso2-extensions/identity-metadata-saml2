@@ -33,6 +33,7 @@ import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServi
 import org.wso2.carbon.idp.mgt.MetadataException;
 import org.wso2.carbon.security.keystore.KeyStoreAdmin;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
+import org.wso2.carbon.utils.security.KeystoreUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -117,7 +118,7 @@ public class SignKeyDataHolder implements X509Credential {
             log.debug("Initializing Key Data for tenant: " + tenantDomain);
         }
 
-        String keyStoreName = tenantDomain.trim().replace(".", "-") + ".jks";
+        String keyStoreName = KeystoreUtils.getKeyStoreFileLocation(tenantDomain);
         String keyAlias = tenantDomain;
         KeyStoreManager keyMan = KeyStoreManager.getInstance(tenantID);
 

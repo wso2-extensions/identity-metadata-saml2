@@ -172,6 +172,7 @@
                             org.wso2.carbon.security.keystore;version="${carbon.identity.package.import.version.range}",
                             org.wso2.carbon.user.core.service; version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.utils.multitenancy;version="${carbon.kernel.package.import.version.range}",
+                            org.wso2.carbon.utils.security.*;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.carbon.registry.core; version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.core.exceptions; version="${carbon.kernel.registry.imp.pkg.version}",
                             org.wso2.carbon.registry.core.jdbc.utils; version="${carbon.kernel.registry.imp.pkg.version}",
