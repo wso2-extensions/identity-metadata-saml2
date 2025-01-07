@@ -30,20 +30,13 @@ import org.wso2.carbon.identity.application.common.IdentityApplicationManagement
 import org.wso2.carbon.identity.application.common.model.FederatedAuthenticatorConfig;
 import org.wso2.carbon.identity.application.common.model.Property;
 import org.wso2.carbon.identity.application.common.util.IdentityApplicationConstants;
-import org.wso2.carbon.identity.core.IdentityRegistryResources;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.idp.metadata.saml2.IDPMetadataConstant;
 import org.wso2.carbon.identity.idp.metadata.saml2.builder.DefaultIDPMetadataBuilder;
-import org.wso2.carbon.identity.idp.metadata.saml2.internal.IDPMetadataSAMLServiceComponentHolder;
 import org.wso2.carbon.idp.mgt.IdentityProviderManagementException;
 import org.wso2.carbon.idp.mgt.IdentityProviderSAMLException;
 import org.wso2.carbon.idp.mgt.MetadataException;
 import org.wso2.carbon.idp.mgt.util.MetadataConverter;
-import org.wso2.carbon.registry.core.Collection;
-import org.wso2.carbon.registry.core.Resource;
-import org.wso2.carbon.registry.core.exceptions.RegistryException;
-import org.wso2.carbon.registry.core.jdbc.utils.Transaction;
-import org.wso2.carbon.registry.core.session.UserRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -91,15 +84,10 @@ public class SAMLMetadataConverter implements MetadataConverter {
      * @return True if the resource exists.
      * @throws IdentityProviderManagementException if there is an error in the registry access.
      */
+    @Override
     public boolean canDelete(int tenantId, String idPName) throws IdentityProviderManagementException {
 
-        try {
-            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService()
-                    .getGovernanceSystemRegistry(tenantId);
-            return registry.resourceExists(IdentityRegistryResources.SAMLIDP + idPName);
-        } catch (RegistryException e) {
-            throw new IdentityProviderManagementException("Error while checking the registry for the IDP.", e);
-        }
+        return false;
     }
 
     /**
@@ -307,50 +295,14 @@ public class SAMLMetadataConverter implements MetadataConverter {
      * @param idPName  Name of the identity provider.
      * @throws IdentityProviderManagementException Error when deleting Identity Provider
      *                                             information from registry.
+     * @deprecated This method is deprecated as registry usage for IDP metadata storage is being phased out.
      */
+    @Deprecated
     public void deleteMetadataString(int tenantId, String idPName) throws IdentityProviderManagementException {
 
-        try {
-
-            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService()
-                    .getGovernanceSystemRegistry(tenantId);
-            String samlIdpPath = IdentityRegistryResources.SAMLIDP;
-            String path = samlIdpPath + idPName;
-
-            try {
-
-                if (registry.resourceExists(path)) {
-                    boolean isTransactionStarted = Transaction.isStarted();
-                    try {
-
-                        if (!isTransactionStarted) {
-                            registry.beginTransaction();
-                        }
-
-                        registry.delete(path);
-
-                        if (!isTransactionStarted) {
-                            registry.commitTransaction();
-                        }
-
-                    } catch (RegistryException e) {
-                        if (!isTransactionStarted) {
-                            registry.rollbackTransaction();
-                        }
-                        throw new IdentityProviderManagementException(
-                                "Error while deleting metadata String in registry for " + idPName, e);
-                    }
-
-                }
-            } catch (RegistryException e) {
-                throw new IdentityProviderManagementException("Error while deleting Identity Provider", e);
-            }
-
-        } catch (RegistryException e) {
-            throw new IdentityProviderManagementException(
-                    "Error while setting a registry object in IdentityProviderManager", e);
+        if (log.isDebugEnabled()) {
+            log.debug("Metadata deletion from registry is deprecated and will not be executed.");
         }
-
     }
 
     /**
@@ -361,72 +313,14 @@ public class SAMLMetadataConverter implements MetadataConverter {
      * @param metadata Metadata in the form of a String.
      * @throws IdentityProviderManagementException Error when deleting Identity Provider
      *                                             information from registry.
+     * @deprecated This method is deprecated as registry usage for IDP metadata storage is being phased out.
      */
+    @Deprecated
     public void saveMetadataString(int tenantId, String idpName, String fedAuthName, String metadata)
             throws IdentityProviderManagementException {
 
-        try {
-
-            UserRegistry registry = IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService()
-                    .getGovernanceSystemRegistry(tenantId);
-            String identityPath = IdentityRegistryResources.IDENTITY;
-            String identityProvidersPath = IdentityRegistryResources.IDENTITYPROVIDER;
-            String samlIdPPath = IdentityRegistryResources.SAMLIDP + idpName;
-            String path = samlIdPPath + "/" + fedAuthName;
-            Resource resource;
-            resource = registry.newResource();
-            resource.setContent(metadata);
-
-            boolean isTransactionStarted = Transaction.isStarted();
-            if (!isTransactionStarted) {
-                registry.beginTransaction();
-            }
-
-            try {
-                if (!registry.resourceExists(identityPath)) {
-
-                    Collection idpCollection = registry.newCollection();
-                    registry.put(identityPath, idpCollection);
-
-                }
-                if (!registry.resourceExists(identityProvidersPath)) {
-
-                    Collection idpCollection = registry.newCollection();
-                    registry.put(identityProvidersPath, idpCollection);
-
-                }
-                if (!registry.resourceExists(IdentityRegistryResources.SAMLIDP)) {
-
-                    Collection samlIdpCollection = registry.newCollection();
-                    registry.put(IdentityRegistryResources.SAMLIDP, samlIdpCollection);
-
-                }
-                if (!registry.resourceExists(samlIdPPath)) {
-                    Collection samlIdPAuthCollection = registry.newCollection();
-                    registry.put(samlIdPPath, samlIdPAuthCollection);
-                }
-                if (!registry.resourceExists(path)) {
-                    registry.put(path, resource);
-                } else {
-                    registry.delete(path);
-                    registry.put(path, resource);
-                }
-
-                if (!isTransactionStarted) {
-                    registry.commitTransaction();
-                }
-            } catch (RegistryException e) {
-
-                if (!isTransactionStarted) {
-                    registry.rollbackTransaction();
-                }
-
-                throw new IdentityProviderManagementException("Error while creating resource in registry", e);
-            }
-
-        } catch (RegistryException e) {
-            throw new IdentityProviderManagementException(
-                    "Error while setting a registry object in IdentityProviderManager", e);
+        if (log.isDebugEnabled()) {
+            log.debug("Metadata saving in registry is deprecated and will not be executed.");
         }
     }
 }
