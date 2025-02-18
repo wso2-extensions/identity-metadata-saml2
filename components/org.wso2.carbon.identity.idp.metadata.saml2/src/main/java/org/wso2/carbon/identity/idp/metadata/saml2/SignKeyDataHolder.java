@@ -152,8 +152,7 @@ public class SignKeyDataHolder implements X509Credential {
             throw new MetadataException("Invalid file configurations. The key alias is not found.");
         }
 
-        KeyStoreAdmin keyAdmin = new KeyStoreAdmin(MultitenantConstants.SUPER_TENANT_ID,
-                IDPMetadataSAMLServiceComponentHolder.getInstance().getRegistryService().getGovernanceSystemRegistry());
+        KeyStoreAdmin keyAdmin = new KeyStoreAdmin(MultitenantConstants.SUPER_TENANT_ID);
         KeyStoreManager keyMan = KeyStoreManager.getInstance(MultitenantConstants.SUPER_TENANT_ID);
         issuerPrivateKey = (PrivateKey) keyAdmin.getPrivateKey(keyAlias, true);
 
