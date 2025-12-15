@@ -109,7 +109,7 @@
                             org.wso2.carbon.identity.idp.metadata.saml2.internal,
                         </Private-Package>
                         <Import-Package>
-                            javax.servlet.http,
+                            javax.servlet.http; version="${javax.servelet.import.version.range}",
                             org.osgi.service.http,
                             org.wso2.carbon.identity.application.authentication.framework.exception,
                             org.wso2.carbon.identity.application.authentication.framework.inbound,

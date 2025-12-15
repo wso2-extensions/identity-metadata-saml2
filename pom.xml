@@ -196,6 +196,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Pax Logging Version -->
         <pax.logging.api.version>1.10.1</pax.logging.api.version>
+        <javax.servelet.import.version.range>[3.1.0,4.0.0)</javax.servelet.import.version.range>
     </properties>
 
     <build>
