@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.wso2.carbon.identity.metadata.saml2</groupId>
         <artifactId>identity-metadata-saml2</artifactId>
-        <version>1.8.7-SNAPSHOT</version>
+        <version>1.9.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
