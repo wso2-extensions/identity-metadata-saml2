@@ -350,6 +350,16 @@ public class SAML2SSOFederatedAuthenticatorConfigBuilder {
                                                                                 get(k).getX509Certificates().get(y).
                                                                                 getValue();
 
+                                                                        if (cert != null &&
+                                                                                !(cert.contains("-----BEGIN " +
+                                                                                        "CERTIFICATE-----") &&
+                                                                                        cert.contains("-----END " +
+                                                                                                "CERTIFICATE-----"))) {
+                                                                            cert = "\n-----BEGIN CERTIFICATE-----\n" +
+                                                                                    cert + "\n-----END " +
+                                                                                    "CERTIFICATE-----\n";
+                                                                        }
+
                                                                         certs.append(cert);
                                                                     }
                                                                 }
